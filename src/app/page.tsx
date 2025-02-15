@@ -4,6 +4,9 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Testimonial from "@/components/Testimonial";
+import Faq from "@/components/Faq";
+import { Carousel } from "flowbite";
+import Crousel from "@/components/Crousel";
 
 // Define the Idea interface
 interface Idea {
@@ -46,10 +49,14 @@ export default function Page() {
   };
 
   return (
+    <>
+    <Crousel/>
+    
     <div className="container mx-auto p-9">
+    
       {/* ✅ Ideas Section */}
       <h2 className="text-2xl font-bold mb-6 text-black">Ideas</h2>
-      <div className="grid md:grid-cols-2 lg:grid-row-2 gap-6">
+      <div className="grid md:grid-cols-3 lg:grid-row-2 gap-4">
         {ideas.length > 0 ? (
           ideas.map((idea) => (
             <div
@@ -63,18 +70,20 @@ export default function Page() {
                 {idea.description}
               </p>
               <Link href="/create">
-                <button className="bg-gradient-to-r from-pink-400 to-orange-300 border rounded-md py-2 px-3 text-black mx-2 my-2">
-                  Add New
-                </button>
+              <button className="bg-blue-500 hover:bg-blue-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
+  Add New
+</button>
+
               </Link>
               <Link href={`/edit/${idea._id}`}>
-                <button className="bg-gradient-to-r from-gray-400 to-gray-700 border rounded-md py-2 px-3 text-black mx-2 my-2">
-                  EDIT
-                </button>
+              <button className="bg-blue-500 hover:bg-blue-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
+  Edit
+</button>
+
               </Link>
               <button
                 onClick={() => handleDelete(idea._id)}
-                className="bg-gradient-to-r from-gray-400 to-gray-700 border rounded-md py-2 px-3 text-black mx-2 my-2"
+                className="bg-red-500 hover:bg-red-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-150 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105"
               >
                 Delete
               </button>
@@ -85,6 +94,9 @@ export default function Page() {
         )}
       </div>
       <Testimonial/>
+      <Faq/>
+      
     </div>
+    </>
   );
 }

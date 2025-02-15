@@ -26,43 +26,56 @@ function Testimonial() {
   
 
   return (
-    <div className="mt-5">
-   <div className="flex  justify-between">
-   <h3 className="text-center mb-7 font-bold text-2xl">Our happy users!!</h3>
-   <Link href="/testimonial">
-                <button className="bg-blue-800 rounded-md py-2 px-3 text-white hover:bg-blue-600">
-                  Add New
-                </button>
-              </Link>
-   </div>
-      
-      <div className="grid md:grid-cols-3 lg:grid-row-3 gap-3">
-      
-    {feedbacks.map((feedback,key)=>(
-      <div  className=" p-4 rounded-xl  hover:animate-pulse mx-7 shadow-gray-500 shadow-sm-light"> 
-         <figure class="max-w-screen-md mx-auto text-center">
-    <svg class="w-5 h-5 mx-auto mb-3 text-gray-400 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 14">
-        <path d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z"/>
-    </svg>
-    <blockquote>
-        <p class="text-2xl italic font-medium text-gray-900 dark:text-white">{feedback.testimonial}</p>
-    </blockquote>
-    <figcaption class="flex items-center justify-center mt-6 space-x-3 rtl:space-x-reverse">
-        <img class="w-6 h-6 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gouch.png" alt="profile picture"/>
-        <div class="flex items-center divide-x-2 rtl:divide-x-reverse divide-gray-500 dark:divide-gray-700">
-            <cite class="pe-3 font-medium text-gray-900 dark:text-white">{feedback.name}</cite>
-            <cite class="ps-3 text-sm text-gray-500 dark:text-gray-400">{feedback.email}</cite>
-        </div>
-    </figcaption>
-</figure>
-      </div>
-     
-    )
-    )}
+    <div className="mt-10 max-w-6xl mx-auto px-6 py-10 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-12">
+  <h3 className="text-2xl font-extrabold text-gray-900 tracking-wide w-full text-center">
+    <span className="bg-gradient-to-r from-pink-400 to-orange-300 bg-clip-text text-transparent">
+      What</span> Our Clients Say
+  </h3>
 
+  <Link href="/testimonial">
+  <button className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg py-2 px-3 text-white text-sm font-semibold hover:scale-105 transform transition-all duration-300 shadow-md hover:shadow-lg">
+  + Add Testimonial
+</button>
+
+  </Link>
 </div>
+
+      <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-8">
+        {feedbacks.map((feedback, key) => (
+          <div
+            key={key}
+            className="p-6 bg-white rounded-2xl shadow-xl border border-gray-200 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:bg-gray-50 cursor-pointer "
+          >
+            <figure className="text-center">
+              <svg
+                className="w-8 h-8 mx-auto mb-5 text-gray-600"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 18 14"
+              >
+                <path d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z"/>
+              </svg>
+              <blockquote>
+                <p className="text-xl italic font-medium text-gray-800 leading-relaxed">“{feedback.testimonial}”</p>
+              </blockquote>
+              <figcaption className="flex items-center justify-center mt-6 space-x-4">
+                <img
+                  className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                  src={feedback.image || "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gouch.png"}
+                  alt="User profile"
+                />
+                <div className="text-left">
+                  <cite className="block font-semibold text-gray-900 text-lg">{feedback.name}</cite>
+                  <cite className="text-sm text-gray-500">{feedback.email}</cite>
+                </div>
+              </figcaption>
+            </figure>
+          </div>
+        ))}
+      </div>
     </div>
-    
   );
 }
 

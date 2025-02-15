@@ -32,9 +32,9 @@ function page() {
 
   return (
     
-    <div className="bg-gray-50 py-16 px-4 md:px-8">
-      <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-black">
+    <div className="bg-gray-50 py-14 px-4 md:px-8">
+      <div className="text-center mb-6 my-8">
+        <h1 className="text-2xl md:text-2xl font-bold text-black">
           <span className="text-yellow-600">Share</span> Your Experience
         </h1>
       </div>
