@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         return NextResponse.json(
             {
-                message:"error aa gya",
+                message:`${error}`,
                 success:false
             }
         )
