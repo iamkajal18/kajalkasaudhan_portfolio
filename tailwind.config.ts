@@ -1,18 +1,16 @@
-import type { Config } from "tailwindcss";
-
-export default {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/flowbite/**/*.js", // Flowbite
+    "./node_modules/@shadcn/ui/components/**/*.{js,ts,jsx,tsx}", // ShadCN UI
+    "./src/**/*.{js,ts,jsx,tsx}",     // Your source files
+    "./public/index.html",            // Any static HTML files
   ],
   theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
+    extend: {}, // Customize Tailwind here if needed
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [
+    // require("flowbite/plugin"),       // Flowbite Plugin
+    // require("@shadcn/ui/plugin"),    // ShadCN Plugin
+  ],
+};
