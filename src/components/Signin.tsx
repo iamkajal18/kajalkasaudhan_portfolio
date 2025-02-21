@@ -1,30 +1,46 @@
-"use client"
-import React from "react";
-import { useState } from "react";
-import axios from "axios";
+"use client";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-// kisi form me jake dekho process kya hai submit ad ma phle form toh shi ho  
-function Signup() {
-  const router=useRouter();
-  
-  const [email,setEmail]=useState("")
-  const [password,setPassword]=useState("")
-  const submitHandler=async(e:any)=>{
-    e.preventDefault();
-    const response=await axios.post("/api/sign-in",
-      {
-        
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
+function Signin() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // Added error state for handling errors
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    try {
+      const response = await signIn("credentials", {
         email,
-        password
+        password,
+        redirect: false, // Disable automatic redirect to handle errors manually
+      });
+
+      if (response?.error) {
+        setError(response.error); // Set error message if authentication fails
+      } else {
+        router.push("/"); // Redirect to home page on successful login
       }
-    );
-    
-      alert(response.data.message)
-      if(response.data.success){
-         router.push("/")
-      }   
-   
-  }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      setError("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn("google", { callbackUrl: "/" }); // Redirect to home page after Google sign-in
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+      setError("An unexpected error occurred. Please try again.");
+    }
+  };
+
   return (
     <div>
       <section className="bg-neutral-950 dark:bg-dark py-20 lg:py-[120px]">
@@ -41,61 +57,68 @@ function Signup() {
                     />
                   </a>
                 </div>
-                <form onSubmit={submitHandler} method="post">
+                {error && ( // Display error message if there's an error
+                  <div className="mb-6 text-red-500 text-sm">{error}</div>
+                )}
+                <form onSubmit={handleSubmit}>
                   <div className="mb-6">
                     <input
                       type="email"
                       placeholder="Email"
                       className="w-full px-5 py-3 outline-blue-800 hover:bg-slate-950 text-base bg-transparent border rounded-md border-stroke text-white focus:border-primary"
                       name="email"
-                      value={email}//ku username nhi? ok i understand
-                      onChange={(e)=>{
-                        setEmail(e.target.value);
-                      }}
-
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
                   <div className="mb-6">
                     <input
                       type="password"
-                      
                       placeholder="Password"
                       className="w-full px-5 py-3 outline-blue-800 hover:bg-slate-950 text-base bg-transparent border rounded-md border-stroke text-white focus:border-primary"
                       name="password"
-                      value={password}//ku username nhi? ok i understand
-                      onChange={(e)=>{
-                        setPassword(e.target.value);
-                      }}
-                      
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
                   </div>
-                 
                   <div className="mb-10">
                     <button
                       type="submit"
                       className="w-full px-5 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
                     >
-                      Register
+                      Sign In
                     </button>
                   </div>
-                  
                 </form>
-                <p className="mb-6 text-base text-secondary-color">Connect With</p>
+                <p className="mb-6 text-base text-secondary-color">
+                  Connect With
+                </p>
                 <ul className="flex justify-between mb-12 -mx-2">
                   <li className="w-full px-2">
-                    <a href="#" className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90">
+                    <a
+                      href="#"
+                      className="flex h-11 items-center justify-center rounded-md bg-[#4064AC] hover:bg-opacity-90"
+                    >
                       Facebook
                     </a>
                   </li>
                   <li className="w-full px-2">
-                    <a href="#" className="flex h-11 items-center justify-center rounded-md bg-[#1C9CEA] hover:bg-opacity-90">
+                    <a
+                      href="#"
+                      className="flex h-11 items-center justify-center rounded-md bg-[#1C9CEA] hover:bg-opacity-90"
+                    >
                       Twitter
                     </a>
                   </li>
                   <li className="w-full px-2">
-                    <a href="#" className="flex h-11 items-center justify-center rounded-md bg-[#D64937] hover:bg-opacity-90">
+                    <button
+                      className="flex h-11 w-full items-center justify-center rounded-md bg-[#DB4437] hover:bg-opacity-90 text-white"
+                      onClick={handleGoogleSignIn}
+                    >
                       Google
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -107,4 +130,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Signin;

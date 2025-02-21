@@ -1,7 +1,4 @@
-// ab hum banayenge ek model 
-//  matlb database 
-// database banane me meri madad karega mongoose 
-// schema means - dhacha 
+
 import mongoose from "mongoose";
 
 const user = new mongoose.Schema({

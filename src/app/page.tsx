@@ -18,6 +18,7 @@ interface Idea {
 export default function Page() {
   const router = useRouter();
   const [ideas, setIdeas] = useState<Idea[]>([]);
+
   const fetchIdeas = async () => {
     try {
       const response = await axios.get("/api/get-idea");
@@ -30,7 +31,7 @@ export default function Page() {
       console.error("Error fetching ideas:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchIdeas();
   }, []);
@@ -50,53 +51,63 @@ export default function Page() {
 
   return (
     <>
-    <Crousel/>
-    
-    <div className="container mx-auto p-9">
-    
-      {/* ✅ Ideas Section */}
-      <h2 className="text-2xl font-bold mb-6 text-black">Ideas</h2>
-      <div className="grid md:grid-cols-3 lg:grid-row-2 gap-4">
-        {ideas.length > 0 ? (
-          ideas.map((idea) => (
-            <div
-              key={idea._id}
-              className="max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-6"
-            >
-              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-black">
-                {idea.title}
-              </h5>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                {idea.description}
-              </p>
-              <Link href="/create">
-              <button className="bg-blue-500 hover:bg-blue-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
-  Add New
-</button>
+      <Crousel />
 
-              </Link>
-              <Link href={`/edit/${idea._id}`}>
-              <button className="bg-blue-500 hover:bg-blue-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
-  Edit
-</button>
+      <div className="container mx-auto p-9">
+        {/* ✅ Ideas Section */}
+        <div className="flex justify-between items-center mb-12">
+          <h3 className="text-2xl font-extrabold text-gray-900 tracking-wide w-full text-center">
+            <span className="bg-gradient-to-r from-pink-400 to-orange-300 bg-clip-text text-transparent">
+            Exploring 
+            </span>{" "}
+            New Ideas
+          </h3>
 
-              </Link>
-              <button
-                onClick={() => handleDelete(idea._id)}
-                className="bg-red-500 hover:bg-red-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-150 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105"
+          <Link href="/create">
+            <button className="bg-blue-500 hover:bg-blue-700 rounded-md w-20 h-9 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
+              Add New
+            </button>
+          </Link>
+        </div>
+
+        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {ideas.length > 0 ? (
+            ideas.map((idea) => (
+              <div
+                key={idea._id}
+                className="max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-6"
               >
-                Delete
-              </button>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">No ideas available</p>
-        )}
+                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-black">
+                  {idea.title}
+                </h5>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                  {idea.description}
+                </p>
+
+                {/* Edit Button */}
+                <Link href={`/edit/${idea._id}`}>
+                  <button className="bg-blue-500 hover:bg-blue-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105">
+                    Edit
+                  </button>
+                </Link>
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDelete(idea._id)}
+                  className="bg-red-500 hover:bg-red-700 rounded-md py-2 px-3 text-white mx-2 my-2 text-sm font-semibold transition-all duration-150 shadow-md hover:shadow-lg will-change-transform transform hover:scale-105"
+                >
+                  Delete
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">No ideas available</p>
+          )}
+        </div>
+
+        <Testimonial />
+        <Faq />
       </div>
-      <Testimonial/>
-      <Faq/>
-      
-    </div>
     </>
   );
 }
