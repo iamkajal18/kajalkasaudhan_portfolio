@@ -1,5 +1,4 @@
-import React from 'react'
-import { signIn } from "@/auth"
+import { signIn } from "next-auth/react"
 export default function GoogleSignIn() {
   return (
     <form

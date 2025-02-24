@@ -11,11 +11,11 @@ const ContactForm = () => {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     setLoading(true);
     setResponseMessage("");
@@ -76,7 +76,7 @@ const ContactForm = () => {
             value={formData.message}
             onChange={handleChange}
             required
-            rows="4"
+            rows={4}
             className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
           ></textarea>
         </div>
