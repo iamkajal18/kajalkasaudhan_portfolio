@@ -11,7 +11,7 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Added error state for handling errors
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault(); // Prevent default form submission behavior
 
     try {

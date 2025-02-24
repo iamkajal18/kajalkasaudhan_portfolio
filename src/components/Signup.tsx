@@ -45,7 +45,7 @@ function Signup() {
                       placeholder="Enter username"
                       className="w-full px-5 py-3 outline-blue-800 hover:bg-slate-950 text-base bg-transparent border rounded-md border-stroke text-white focus:border-primary"
                       name="username"
-                      value={username}//ku username nhi? ok i understand
+                      value={username}
                       onChange={(e)=>{
                         setUsername(e.target.value);
                       }}
