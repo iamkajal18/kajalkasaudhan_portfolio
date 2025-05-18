@@ -39,7 +39,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
               <div className="my-4 rounded-lg overflow-hidden">
                 <SyntaxHighlighter
                   language={language}
-                  style={vscDarkPlus}
+                  style={vscDarkPlus as any}
                   PreTag="div"
                   showLineNumbers={language !== 'text'}
                   wrapLines
@@ -56,7 +56,6 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                       lineHeight: '1.5',
                     }
                   }}
-                  {...props}
                 >
                   {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>

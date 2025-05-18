@@ -15,7 +15,7 @@ interface BlogDisplayProps {
   };
 }
 
-const BlogDisplay = ({ blog }: BlogDisplayProps) => {
+const BlogDisplay = ({ blog }: any) => {
   // Determine if content is markdown (either by explicit contentType or by heuristic)
   const isMarkdown = blog.contentType === 'markdown' || isLikelyMarkdown(blog.content);
   

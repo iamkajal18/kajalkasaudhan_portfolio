@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 const NumericalAbility = () => {
-  const [activeTopic, setActiveTopic] = useState(null);
+  const [activeTopic, setActiveTopic] = useState<string | null>(null);
 
   const topics = [
     {
@@ -245,7 +245,7 @@ const NumericalAbility = () => {
       <div className="flex-1 p-4">
         {activeTopic ? (
           <div className="bg-white rounded-lg shadow-md p-6 overflow-auto">
-            {topics.find(t => t.id === activeTopic).content}
+            {topics.find(t => t.id === activeTopic)?.content}
             <div className="mt-8 pt-4 border-t">
               <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
                 Test Yourself on This Topic

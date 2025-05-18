@@ -435,7 +435,7 @@ function Page() {
                         editor
                           .chain()
                           .focus()
-                          .toggleHeading({ level: parseInt(value) })
+                          .toggleHeading({ level: parseInt(value) as any })
                           .run();
                       }
                     }}
@@ -635,8 +635,16 @@ function Page() {
                 maxFiles: 1,
               }}
               onSuccess={(result) => {
-                const url = result.info?.secure_url;
-                setImageUrl(url || "");
+                let url = "";
+                if (
+                  result &&
+                  typeof result.info === "object" &&
+                  result.info !== null &&
+                  "secure_url" in result.info
+                ) {
+                  url = (result.info as { secure_url?: string }).secure_url || "";
+                }
+                setImageUrl(url);
               }}
               onError={(error) => {
                 console.error("Upload error:", error);

@@ -17,7 +17,12 @@ import TableCell from '@tiptap/extension-table-cell';
 import { Markdown } from 'tiptap-markdown';
 import DOMPurify from 'dompurify';
 
-const RichTextEditor = ({ initialContent = '', onSave }) => {
+type RichTextEditorProps = {
+  initialContent?: string;
+  onSave: (content: { html: string; markdown: string; text: string }) => void;
+};
+
+const RichTextEditor = ({ initialContent = '', onSave }: RichTextEditorProps) => {
   const [mode, setMode] = useState('wysiwyg'); // 'wysiwyg', 'markdown', or 'preview'
   const [videoUrl, setVideoUrl] = useState('');
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -74,6 +79,7 @@ const RichTextEditor = ({ initialContent = '', onSave }) => {
   });
 
   const setLink = useCallback(() => {
+    if (!editor) return;
     const previousUrl = editor.getAttributes('link').href;
     const url = window.prompt('URL', previousUrl);
 
@@ -92,7 +98,7 @@ const RichTextEditor = ({ initialContent = '', onSave }) => {
   }, [editor]);
 
   const addVideo = useCallback(() => {
-    if (videoUrl) {
+    if (videoUrl && editor) {
       editor.commands.setYoutubeVideo({
         src: videoUrl,
       });
@@ -102,7 +108,7 @@ const RichTextEditor = ({ initialContent = '', onSave }) => {
   }, [editor, videoUrl]);
 
   const addImage = useCallback(() => {
-    if (imageUrl) {
+    if (imageUrl && editor) {
       editor.commands.setImage({ src: imageUrl });
       setShowImageModal(false);
       setImageUrl('');
@@ -324,7 +330,7 @@ const RichTextEditor = ({ initialContent = '', onSave }) => {
                     editor
                       .chain()
                       .focus()
-                      .toggleHeading({ level: parseInt(value) })
+                      .toggleHeading({ level: parseInt(value) as 1 | 2 | 3 })
                       .run();
                   }
                 }}
