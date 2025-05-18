@@ -11,7 +11,7 @@ function Signup() {
   const [password,setPassword]=useState("")
   const submitHandler=async(e:any)=>{
     e.preventDefault();
-    const response=await axios.post("/api/sign-up",
+    const response=await axios.post("/api/(auth)/sign-up",
       {
         username,
         email,

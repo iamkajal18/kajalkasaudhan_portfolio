@@ -1,31 +1,28 @@
-// ab hum banayenge ek model 
-//  matlb database 
-// database banane me meri madad karega mongoose 
-// schema means - dhacha 
 import mongoose from "mongoose";
 
 const idea = new mongoose.Schema({
-
-    title: {
-
-        type: String,
-
-        required: true,
-
-    },
-
-    description: {
-
-        type: String,
-
-        required: true,
-
-    },
-
-    
-
+  title: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  contentType: {
+    type: String,
+    enum: ['html', 'markdown'],
+    default: 'html'
+  },
+  imageUrl: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const Idea = mongoose.models.Idea || mongoose.model("Idea", idea);
 
-export default Idea; 
+export default Idea;

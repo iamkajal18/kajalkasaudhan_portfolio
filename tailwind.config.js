@@ -90,7 +90,9 @@ module.exports = {
     	}
     },
 	plugins: [
-	  require("flowbite/plugin"),    // Keeping Flowbite plugin
-	  // require("tailwindcss-animate") // Adding shadcn animation plugin
-	],
+	  require("flowbite/plugin"),
+	  require('flowbite-typography'),
+	  require('@tailwindcss/typography'),
+        require("tailwindcss-animate")
+    ],
   };

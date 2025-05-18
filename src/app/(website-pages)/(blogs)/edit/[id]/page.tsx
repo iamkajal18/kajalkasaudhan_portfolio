@@ -7,7 +7,7 @@ function page({params}:any) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDes] = useState("");
-  
+
   const submitHandler= async(e:any)=>{
     const id = await params;
     // params se id to aa rhi hai lekin wo humko string chahiye

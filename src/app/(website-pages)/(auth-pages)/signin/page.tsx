@@ -1,6 +1,6 @@
 import React from "react";
-import Signin from "../../components/Signin";
-import GoogleSignIn from "@/components/GoogleSignIn";
+import Signin from "@/components/Signin";
+
 function page() {
   return (
     <div>
