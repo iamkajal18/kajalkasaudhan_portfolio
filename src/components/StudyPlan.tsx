@@ -115,10 +115,11 @@ const StudyPlan = () => {
         {/* Compact CTA */}
        
 <div className="mt-12 bg-indigo-700 text-white p-6 rounded-lg text-center">
+ 
   <h3 className="text-xl font-bold mb-2">Get Competition Ready</h3>
   <p className="mb-4 text-sm">Visit Trackode For Play Quiz</p>
   <a 
-    href="https://trackode.in/quiz-list" 
+    href="https://trackode.in/programming-quizzes" 
     target="_blank" 
     rel="noopener noreferrer"
     className="inline-block bg-white text-indigo-700 px-4 py-2 rounded-md font-medium hover:bg-indigo-100 transition-colors duration-150 text-sm"

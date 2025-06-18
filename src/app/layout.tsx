@@ -3,12 +3,10 @@ import Head from "next/head";
 import { ReactNode } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { SessionProvider } from "next-auth/react"
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import { SessionProvider } from "next-auth/react" 
+import toast, { Toaster } from 'react-hot-toast';
 import './globals.css';
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 // import { Analytics } from "@vercel/analytics/react"
 import { ThemeProvider } from '../components/ThemeContext';
 // import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -22,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const hasVisited = localStorage.getItem("hasVisited");
 
     if (!hasVisited) {
-      toast.success("🎉 Welcome to Trackode!", { autoClose: 3000 });
+      toast.success("🎉 Welcome to LearnLive!");
       localStorage.setItem("hasVisited", "true");
       setIsFirstVisit(true);
     }
@@ -39,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
        
 
         <Navbar />
-        <ToastContainer position="top-right" autoClose={3000}/>
+      <Toaster/>
           <div className="min-h-screen">{children}</div>
         
         

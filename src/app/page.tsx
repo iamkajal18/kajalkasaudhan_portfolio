@@ -5,9 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Testimonial from "@/components/Testimonial";
 import Faq from "@/components/Faq";
-import Herosection from "@/components/Herosection";
+
 import StudyPlan from "@/components/StudyPlan";
 import Banner from "@/components/Bannner";
+import RoadMap from "@/components/roadmaps/Main";
+import PlacementPre from "@/components/PlacementPre";
+
 
 // Define the Idea interface
 interface Idea {
@@ -54,8 +57,11 @@ export default function Page() {
   return (
     <>
     <Banner/>
+    
     <StudyPlan/>
-     <Herosection/>
+    <RoadMap/>
+     <PlacementPre/>
+
    
      <div className="container mx-auto p-9">
   {/* ✅ Ideas Section */}
@@ -72,6 +78,7 @@ export default function Page() {
         Add New
       </button>
     </Link>
+     
   </div>
 
   <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

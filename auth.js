@@ -16,7 +16,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         await connectDB();
         const { email, password } = credentials;
-        const user = await User.findOne({ email });
+        console.log(email,password);
+        const user = await User.findOne({ email:email });
+        console.log(user)
         if (!user) {
           throw new Error("User not found");
         }

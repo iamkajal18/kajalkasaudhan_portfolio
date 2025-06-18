@@ -1,46 +1,32 @@
-import React from 'react'
+"use client";
 
-function About() {
+import React from "react";
+
+const AboutSection = () => {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Empowering Knowledge Through Insightful Content</h1>
-      <p className="mb-6">
-        At <strong>Blog!</strong>, we are committed to delivering high-quality, informative, and engaging content on technology, artificial intelligence, software development, web technologies, and more. Our platform serves as a valuable resource for professionals, learners, and enthusiasts who seek to stay ahead in an ever-evolving digital landscape.
-      </p>
+    <section className="w-full bg-gradient-to-br from-purple-700 to-indigo-900 text-white py-20 px-6 md:px-20">
+      <div className="max-w-6xl mx-auto text-center">
+        <h2 className="text-4xl font-bold mb-6">Empowering Education for the Future</h2>
+        <p className="text-lg md:text-xl mb-10 leading-relaxed">
+          Our platform bridges the gap between learners and educators through real-time, interactive classes using cutting-edge technologies like <span className="font-semibold">WebRTC</span>, <span className="font-semibold">Socket.IO</span>, and a powerful <span className="font-semibold">Next.js</span> front-end. We offer role-based access, enabling students, instructors, and admins to collaborate effectively in a modern learning ecosystem.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white text-black p-6 rounded-2xl shadow-xl">
+            <h3 className="text-xl font-semibold mb-2">🚀 Fast & Secure</h3>
+            <p>Backed by PostgreSQL and JWT/NextAuth authentication, our system ensures speed and safety.</p>
+          </div>
+          <div className="bg-white text-black p-6 rounded-2xl shadow-xl">
+            <h3 className="text-xl font-semibold mb-2">📡 Real-Time Interaction</h3>
+            <p>Live video, chat, and signaling with WebRTC + Socket.IO for a seamless experience.</p>
+          </div>
+          <div className="bg-white text-black p-6 rounded-2xl shadow-xl">
+            <h3 className="text-xl font-semibold mb-2">🎓 Personalized Learning</h3>
+            <p>Progress tracking, course management, and advanced analytics for success-driven learning.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
-      <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
-      <p className="mb-6">
-        Our mission is to simplify complex concepts and make knowledge accessible to a global audience. Through well-researched articles, expert insights, and practical examples, we aim to foster a culture of continuous learning and innovation.
-      </p>
-
-      <h2 className="text-2xl font-semibold mb-4">Our Vision</h2>
-      <p className="mb-6">
-        We envision a dynamic and knowledge-driven ecosystem where individuals and professionals can explore the latest industry trends, gain hands-on expertise, and contribute to meaningful discussions that shape the future of technology.
-      </p>
-
-      <h2 className="text-2xl font-semibold mb-4">Why Choose Us?</h2>
-      <ul className="list-disc pl-6 mb-6">
-        <li><strong>Expert-Curated Content</strong> – Authored by industry professionals and subject matter experts.</li>
-        <li><strong>In-Depth Analysis</strong> – Well-researched articles with real-world applications.</li>
-        <li><strong>User-Centric Approach</strong> – Content tailored for developers, engineers, and tech enthusiasts.</li>
-        <li><strong>Interactive Learning</strong> – Practical examples, code snippets, and step-by-step guides.</li>
-        <li><strong>Community Engagement</strong> – A collaborative space for knowledge sharing and discussion.</li>
-      </ul>
-
-      <h2 className="text-2xl font-semibold mb-4">Our Commitment</h2>
-      <p className="mb-6">
-        At <strong>Blog</strong>, we are dedicated to maintaining the highest standards of content quality, accuracy, and relevance. Our goal is to provide actionable insights that help individuals enhance their skills, make informed decisions, and stay competitive in their respective fields.
-      </p>
-
-      <h2 className="text-2xl font-semibold mb-4">Join the Community</h2>
-      <p className="mb-6">
-        We encourage our readers to actively participate by sharing their insights, providing feedback, and engaging with our content. Stay updated with the latest industry developments by subscribing to our newsletter and following us on social media.
-      </p>
-      <p>
-        For inquiries, collaborations, or suggestions, feel free to reach out to us. Let’s shape the future of technology together!
-      </p>
-    </div>
-  )
-}
-
-export default About
+export default AboutSection;

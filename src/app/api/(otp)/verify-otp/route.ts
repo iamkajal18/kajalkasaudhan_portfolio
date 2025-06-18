@@ -1,5 +1,5 @@
 import { NextRequest,NextResponse } from "next/server";
-import OtpStorage from "@/app/model/OtpStorage";
+import OtpStorage from '@/model/OtpStorage';
 import connectDB from "@/lib/util";
 export async function POST(request: NextRequest) {
     await connectDB();
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
         //now getting the data from request
         const {email, otp } = await request.json();
         // we got the email 
-        //checking either there is email and otp in the otpStorage or not
+        //checking either there is femail and otp in the otpStorage or not
         const otpData = await OtpStorage
             .findOne({email})
         if(!otpData){

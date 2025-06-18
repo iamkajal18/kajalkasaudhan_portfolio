@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
+import OtpStorage from '@/model/OtpStorage';
 import nodemailer from 'nodemailer';
-import OtpStorage from "@/app/model/OtpStorage"
 // In a production environment, you should use a database to store these values
-import User from "@/app/model/User"
+import User from '@/model/User';
 // Configure nodemailer transporter
 const transporter = nodemailer.createTransport({
   host: "google.com",
@@ -19,17 +19,17 @@ async function sendOTPEmail(email: string, otp: string): Promise<void> {
   const mailOptions = {
     from: process.env.OTP_EMAIL_USER,
     to: email,
-    subject: 'Your Verification Code for Trackode',
+    subject: 'Your Verification Code for Learnlive',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
         <h2 style="color: #333;">Email Verification</h2>
-        <p>Thank you for signing up for Trackode. Please use the following code to verify your email address:</p>
+        <p>Thank you for signing up for Learnlive. Please use the following code to verify your email address:</p>
         <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0;">
           <h1 style="font-size: 32px; margin: 0; color: #007bff;">${otp}</h1>
         </div>
         <p>This code will expire in 10 minutes.</p>
         <p>If you didn't request this code, you can safely ignore this email.</p>
-        <p>Best regards,<br />The Trackode Team</p>
+        <p>Best regards,<br />The Learnlive Team</p>
       </div>
     `,
   };
@@ -41,6 +41,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, purpose } = body;
+    console.log(email);
     // some validation for the email and purpose
     if (!email || typeof email !== 'string' || !email.match(/^\S+@\S+\.\S+$/)) {
       return NextResponse.json(
@@ -51,7 +52,10 @@ export async function POST(request: Request) {
     
     const user = await User.findOne(
       { email: email } 
+
     )
+    console.log(user);
+
     // now we have the user 
 
     // from here using purpose we can check either the user is new or existing

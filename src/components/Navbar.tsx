@@ -1,81 +1,275 @@
-"use client";
-
-import React, { useState } from "react";
+'use client';
+import { useState, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FaSearch, FaUserCircle, FaMoon, FaSun, FaBars, FaTimes } from "react-icons/fa";
+import { signOut } from "next-auth/react";
+import toast, { Toaster } from 'react-hot-toast';
 import { useTheme } from "./ThemeContext";
-import { Moon, Sun } from "lucide-react";
-const Navbar = () => { // ✅ Props receive kiya
-  const [search, setSearch] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter();
-  const isLoggedIn = false; // Replace with actual authentication logic
-  const { theme, toggleTheme } = useTheme(); 
-  const handleSearch = (e:any) => {
-    e.preventDefault();
-    if (search.trim()) {
-      router.push(`/search?query=${search}`);
-    }
+import { Moon, Sun, ChevronDown, Menu, X, User, LogOut, Home, BarChart, Users, MessageSquare, BookOpen, Video } from "lucide-react";
+
+
+const Navbar: React.FC = () => {
+  const { data: session, status } = useSession();
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isNavOpen, setNavOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null); // Ref for mobile menu
+
+  // Handle scroll for shadow effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Handle sign-out
+  const handleSignOut = async () => {
+    toast.success("Signed out successfully");
+    await signOut({ callbackUrl: '/' });
+    localStorage.setItem("isFirstVisit", "true");
   };
-  
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isDropdownOpen && !(event.target as Element).closest('.user-dropdown')) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutsideNav = (event: MouseEvent) => {
+      if (
+        isNavOpen &&
+        navRef.current &&
+        !(event.target as Element).closest('.mobile-menu') &&
+        !(event.target as Element).closest('.mobile-menu-toggle')
+      ) {
+        setNavOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutsideNav);
+    return () => document.removeEventListener('mousedown', handleClickOutsideNav);
+  }, [isNavOpen]);
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md py-4 px-6 flex justify-between items-center relative">
-      {/* Logo */}
-      <Link href="/" className="text-2xl font-bold text-gray-800 dark:text-white">
-        <img src="logo.png" className="h-8 rounded-md" alt="Logo" />
-      </Link>
+    <nav className={`transition-all duration-300 border-b ${theme === "light" ? "bg-white border-gray-100" : "bg-gray-900 border-gray-800"} sticky top-0 z-50`}>
+      <div className={`${scrolled ? 'shadow-md' : ''}`}>
+        
 
-      {/* Mobile Menu Toggle */}
-      <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-gray-700 dark:text-white text-2xl">
-        {menuOpen ? <FaTimes /> : <FaBars />}
-      </button>
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <Link href="/" className="flex items-center space-x-2 rtl:space-x-reverse">
+            <img
+              src="logo.png"
+              className="h-10  rounded-lg"
+              alt="LearnLive Logo"
+            />
+            <span className={`self-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 lg:text-2xl text-xl font-bold whitespace-nowrap`}>
+              LearnLive
+            </span>
+          </Link>
 
-      {/* Navigation Links (Desktop) */}
-      <div className="hidden md:flex space-x-6">
-        <Link href="/" className="text-gray-700 dark:text-white hover:text-blue-500">Home</Link>
-        <Link href="/tendingblog" className="text-gray-700 dark:text-white hover:text-blue-500">Trending Blog</Link>
-        <Link href="/about" className="text-gray-700 dark:text-white hover:text-blue-500">About</Link>
-        <Link href="/contact" className="text-gray-700 dark:text-white hover:text-blue-500">Contact</Link>
-      </div>
+          <div className="flex items-center md:order-2 space-x-4 rtl:space-x-reverse">
+            {/* Profile button */}
+            {status === "authenticated" ? (
+              <div className="relative user-dropdown">
+                <button
+                  type="button"
+                  className={`flex items-center text-sm rounded-full focus:ring-2 focus:ring-blue-500 transition-all hover:scale-105 ${theme === "light" ? "bg-gray-100" : "bg-gray-800"}`}
+                  onClick={() => setDropdownOpen(!isDropdownOpen)}
+                  aria-expanded={isDropdownOpen}
+                >
+                  <span className="sr-only">Open user menu</span>
+                  <div className="relative">
+                    {session.user?.image ? (
+                      <img
+                        className="w-9 h-9 rounded-full p-0.5 border-2 border-blue-500"
+                        src={session.user.image}
+                        alt="User photo"
+                      />
+                    ) : (
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center ${theme === "light" ? "bg-blue-100" : "bg-blue-900"}`}>
+                        <User size={18} className={theme === "light" ? "text-blue-600" : "text-blue-300"} />
+                      </div>
+                    )}
+                  </div>
+                </button>
 
-      {/* Search Bar (Desktop) */}
-      <form onSubmit={handleSearch} className="relative hidden md:block">
-        <input
-          type="text"
-          className="border rounded-full px-4 py-2 w-48 dark:bg-gray-800 dark:text-white"
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button type="submit" className="absolute right-3 top-2 text-gray-500">
-          <FaSearch />
-        </button>
-      </form>
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <div
+                    className={`z-50 mt-2 text-base list-none divide-y rounded-xl shadow-lg absolute right-0 w-56 origin-top-right transition-all duration-200 ${theme === "light" ? "bg-white text-gray-900 divide-gray-100" : "bg-gray-800 text-white divide-gray-700"}`}
+                  >
+                    <div className="px-4 py-3 text-center">
+                      <span className={`block font-sans font-bold text-base ${theme === "light" ? "text-gray-900" : "text-white"}`}>
+                        {session.user?.name}
+                      </span>
+                      <span className="block text-sm truncate opacity-70">
+                        {session.user?.email}
+                      </span>
+                    </div>
+                    <ul className="py-1">
+                      <li>
+                        <Link
+                          href="/admin-dashboard"
+                          className={`flex items-center px-4 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition-colors ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
+                        >
+                          <BarChart size={16} className="mr-2" />
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={`/profile/${session.user?.email}`}
+                          className={`flex items-center px-4 py-2 text-sm font-medium hover:bg-blue-500 hover:text-white transition-colors ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
+                        >
+                          <User size={16} className="mr-2" />
+                          Profile Settings
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="#"
+                          onClick={handleSignOut}
+                          className={`flex items-center px-4 py-2 text-sm font-medium hover:bg-red-500 hover:text-white transition-colors ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
+                        >
+                          <LogOut size={16} className="mr-2" />
+                          Sign out
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/signin"
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 hover:translate-y-[-2px] ${theme === "light" ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-600 hover:bg-blue-500 text-white"}`}
+              >
+                <User size={16} className="mr-1" />
+                Sign in
+              </Link>
+            )}
 
-      {/* Right Section: Dark Mode, Auth, Profile */}
-      <div className="flex items-center space-x-4">
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setNavOpen(!isNavOpen)}
+              className={`inline-flex items-center p-2 rounded-lg md:hidden focus:outline-none focus:ring-2 transition-colors mobile-menu-toggle ${theme === "light" ? "text-gray-700 hover:bg-gray-100 focus:ring-gray-200" : "text-gray-300 hover:bg-gray-700 focus:ring-gray-600"}`}
+              aria-expanded={isNavOpen}
+            >
+              <span className="sr-only">{isNavOpen ? 'Close menu' : 'Open menu'}</span>
+              {isNavOpen ? (
+                <X size={24} />
+              ) : (
+                <Menu size={24} />
+              )}
+            </button>
+          </div>
+
+          {/* Navigation links */}
+         <div
+  ref={navRef}
+  className={`items-center justify-between w-full md:flex md:w-auto md:order-1 transition-all duration-300 mobile-menu ${isNavOpen ? "block" : "hidden"}`}
+>
+  <ul
+    className={`flex flex-col font-medium p-6 md:p-0 mt-4 rounded-lg md:flex-row md:space-x-1 md:mt-0 md:border-0 ${
+      theme === "light" ? "bg-white md:bg-white" : "bg-gray-900 md:bg-gray-900"
+    }`}
+  >
+    <NavItem href="/" theme={theme} icon={<Home size={18} />}>
+      Home
+    </NavItem>
+
+ <NavItem href="/studyplan" theme={theme} icon={<Home size={18} />}>
+     Success Guide
+    </NavItem>
+    <NavItem href="/roadmap" theme={theme} icon={<BookOpen size={18} />}>
+      Courses
+    </NavItem>
+
+   
+
+    <NavItem
+      href="/live-class"
+      theme={theme}
+      icon={<Video size={18} />}
+    >
+      Live Classes
+    </NavItem>
+
+    <NavItem href="/placementpre" theme={theme} icon={<MessageSquare size={18} />}>
+     Placement Preparation & Tips
+    </NavItem>
+
+   
+
+    <li className="w-full md:w-auto">
       <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-full ${theme === "light" ? "bg-gray-200" : "bg-gray-700"}`}
-          >
-            {theme === "light" ? <Moon size={20} className="text-black" /> : <Sun size={20} className="text-white" />}
-        </button>
+        onClick={toggleTheme}
+        className={`relative flex items-center justify-start w-full md:w-auto px-3 py-2 rounded-lg transition-all duration-300 group text-sm font-medium ${
+          theme === "light"
+            ? "bg-gray-100 hover:bg-gray-200 text-gray-700 md:bg-transparent md:hover:bg-blue-50"
+            : "bg-gray-800 hover:bg-gray-700 text-yellow-300 md:bg-transparent md:hover:bg-gray-800"
+        }`}
+        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      >
+        <span className="relative w-6 h-6 flex items-center justify-center mr-2">
+          <Moon
+            size={22}
+            className={`absolute transition-opacity duration-300 ${
+              theme === "light" ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <Sun
+            size={22}
+            className={`absolute transition-opacity duration-300 ${
+              theme === "light" ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        </span>
+        <span className="block md:hidden">
+          {theme === "light" ? "Dark Mode" : "Light Mode"}
+        </span>
+        <span
+          className={`absolute top-full mt-2 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 md:block hidden ${
+            theme === "light" ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-900"
+          }`}
+        >
+          {theme === "light" ? "Dark Mode" : "Light Mode"}
+        </span>
+      </button>
+    </li>
+  </ul>
+</div>
 
-        {isLoggedIn ? (
-          <>
-            <Link href="/write" className="text-green-500 font-semibold hover:underline">Write a Blog</Link>
-            <button className="text-blue-500 font-semibold hover:underline">Logout</button>
-          </>
-        ) : (
-          <Link href="/signin" className="text-blue-500 font-semibold hover:underline">Login</Link>
-        )}
-
-        <FaUserCircle className="text-2xl text-gray-700 dark:text-white cursor-pointer" />
+        </div>
       </div>
     </nav>
   );
 };
+
+// Helper component for nav items
+const NavItem = ({ href, theme, icon, children }: any) => (
+  <li>
+    <Link
+      href={href}
+      className={`flex items-center py-2 px-3 md:px-3 rounded-lg font-medium text-sm hover:text-blue-600 transition-colors ${
+        theme === "light"
+          ? "text-gray-700 hover:bg-blue-50 md:hover:bg-blue-50"
+          : "text-gray-200 hover:bg-gray-800 md:hover:bg-gray-800"
+      }`}
+    >
+      <span className="mr-2">{icon}</span>
+      {children}
+    </Link>
+  </li>
+);
 
 export default Navbar;

@@ -10,7 +10,7 @@ module.exports = {
     extend: {}, // Customize Tailwind here if needed
   },
   plugins: [
-    // require("flowbite/plugin"),       // Flowbite Plugin
-    // require("@shadcn/ui/plugin"),    // ShadCN Plugin
+    require("flowbite/plugin"),       // Flowbite Plugin
+    require("@shadcn/ui/plugin"),    // ShadCN Plugin
   ],
 };
