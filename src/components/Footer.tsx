@@ -235,45 +235,45 @@ function Footer() {
               ))}
             </div>
             {/* Newsletter Signup */}
-            <form onSubmit={handleSubscribe} className="mt-4">
-              <h4
-                className={`text-sm font-semibold mb-2 ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-700"
-                }`}
-              >
-                Subscribe to our newsletter
-              </h4>
-              <div className="flex">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className={` px-1 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    theme === "dark"
-                      ? "bg-gray-800 text-gray-200 border-gray-700"
-                      : "bg-white text-gray-900 border-gray-300"
-                  } border`}
-                />
-                <button
-                  type="submit"
-                  className="px-2  py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-r-md hover:from-blue-600 hover:to-purple-700 transition-all"
-                >
-                  Subscribe
-                </button>
-              </div>
-              {message && (
-                <p
-                  className={`mt-2 text-sm ${
-                    message.includes("success")
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  {message}
-                </p>
-              )}
-            </form>
+           <form onSubmit={handleSubscribe} className="mt-4">
+  <h4
+    className={`text-sm font-semibold mb-2 ${
+      theme === "dark" ? "text-gray-300" : "text-gray-700"
+    }`}
+  >
+    Subscribe to our newsletter
+  </h4>
+  <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+    <input
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      placeholder="Enter your email"
+      className={`w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        theme === "dark"
+          ? "bg-gray-800 text-gray-200 border-gray-700"
+          : "bg-white text-gray-900 border-gray-300"
+      } border`}
+    />
+    <button
+      type="submit"
+      className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg font-semibold"
+    >
+      Subscribe
+    </button>
+  </div>
+  {message && (
+    <p
+      className={`mt-2 text-sm ${
+        message.includes("success")
+          ? "text-green-500"
+          : "text-red-500"
+      }`}
+    >
+      {message}
+    </p>
+  )}
+</form>
           </div>
         </div>
 
