@@ -62,7 +62,7 @@ function Footer() {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-3   md:grid-cols-4 gap-12">
           {/* Brand Section */}
           <div className="space-y-6">
             <Link href="/" className="flex items-center space-x-4 group">
@@ -132,44 +132,44 @@ function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div>
-            <h3
-              className={`text-xl font-semibold mb-6 tracking-wide ${
-                theme === "dark" ? "text-white" : "text-black"
-              }`}
-            >
-              Get in Touch
-            </h3>
-            <ul
-              className={`space-y-4 text-sm ${
-                theme === "dark" ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              <li>
-                Email:{" "}
-                <Link
-                  href="mailto:kasaudhankajal51@gmail.com"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark" ? "hover:text-white" : "hover:text-black"
-                  }`}
-                >
-                  info@LearnLive.com
-                </Link>
-              </li>
-              <li>
-                Phone:{" "}
-                <Link
-                  href="/"
-                  className={`transition-colors duration-200 ${
-                    theme === "dark" ? "hover:text-white" : "hover:text-black"
-                  }`}
-                >
-                  6387486751
-                </Link>
-              </li>
-              <li>Near BBD</li>
-            </ul>
-          </div>
+         <div>
+  <h3
+    className={`text-xl font-semibold mb-6 tracking-wide ${
+      theme === "dark" ? "text-white" : "text-black"
+    }`}
+  >
+    Get in Touch
+  </h3>
+  <ul
+    className={`space-y-4 text-sm  ${
+      theme === "dark" ? "text-gray-400" : "text-gray-600"
+    }`}
+  >
+    <li>
+      Email:{" "}
+      <Link
+        href="mailto:kasaudhankajal51@gmail.com"
+        className={`transition-colors duration-200 ${
+          theme === "dark" ? "hover:text-white" : "hover:text-black"
+        }`}
+      >
+        kasaudhankajal51@gmail.com
+      </Link>
+    </li>
+    <li>
+      Phone:{" "}
+      <Link
+        href="/"
+        className={`transition-colors duration-200 ${
+          theme === "dark" ? "hover:text-white" : "hover:text-black"
+        }`}
+      >
+        6387486751
+      </Link>
+    </li>
+    <li>Near BBD</li>
+  </ul>
+</div>
 
           {/* Social Media */}
           <div>
