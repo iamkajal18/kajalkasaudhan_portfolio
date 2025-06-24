@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { CldUploadWidget } from "next-cloudinary";
@@ -8,26 +8,34 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import TextStyle from "@tiptap/extension-text-style";
 import Underline from "@tiptap/extension-underline";
-import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
-import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import { FontFamily } from "@tiptap/extension-font-family"; // Verify this package
-import { FontSize } from "tiptap-extension-font-size"; // Verify this package
-import { Youtube } from "@tiptap/extension-youtube";
-import { Dropcursor } from "@tiptap/extension-dropcursor";
-import { Table } from "@tiptap/extension-table";
-import { TableCell } from "@tiptap/extension-table-cell";
-import { TableHeader } from "@tiptap/extension-table-header";
-import { TableRow } from "@tiptap/extension-table-row";
-import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
+import Youtube from "@tiptap/extension-youtube";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import FontFamily from "@tiptap/extension-font-family";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 import { lowlight } from "lowlight";
 import DOMPurify from "dompurify";
 import Turndown from "turndown";
 import { marked } from "marked";
-import { MarkdownRenderer } from "@/components/MarkDown"; // Ensure this is correctly defined
+import ReactMarkdown from "react-markdown";
+
+// Debounce utility
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 function Page() {
   const router = useRouter();
@@ -36,12 +44,38 @@ function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [showVideoModal, setShowVideoModal] = useState(false);
-  const [mode, setMode] = useState("wysiwyg");
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [inlineImageUrl, setInlineImageUrl] = useState("");
+  const [mode, setMode] = useState("wysiwyg"); // Default mode
   const [markdownContent, setMarkdownContent] = useState("");
   const [error, setError] = useState("");
+  const [showFontDropdown, setShowFontDropdown] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
-  // Initialize Turndown for HTML-to-Markdown conversion
-  const turndownService = React.useMemo(() => {
+  // Font families
+  const fontFamilies = [
+    { name: "Default", value: "" },
+    { name: "Arial", value: "Arial, sans-serif" },
+    { name: "Helvetica", value: "Helvetica, sans-serif" },
+    { name: "Times New Roman", value: "Times New Roman, serif" },
+    { name: "Georgia", value: "Georgia, serif" },
+    { name: "Verdana", value: "Verdana, sans-serif" },
+    { name: "Courier New", value: "Courier New, monospace" },
+    { name: "Impact", value: "Impact, sans-serif" },
+    { name: "Comic Sans MS", value: "Comic Sans MS, cursive" },
+    { name: "Trebuchet MS", value: "Trebuchet MS, sans-serif" },
+  ];
+
+  // Colors for text
+  const colors = [
+    "#000000", "#333333", "#666666", "#999999", "#cccccc",
+    "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff",
+    "#00ffff", "#ff8000", "#8000ff", "#ff0080", "#80ff00",
+    "#0080ff", "#ff4000", "#4000ff", "#ff0040", "#40ff00"
+  ];
+
+  // Initialize Turndown for HTML-to-Markdown
+  const turndownService = useMemo(() => {
     const service = new Turndown({
       headingStyle: "atx",
       codeBlockStyle: "fenced",
@@ -63,8 +97,8 @@ function Page() {
     service.addRule("images", {
       filter: "img",
       replacement: (_, node) => {
-        const alt = (node as HTMLImageElement).getAttribute("alt") || "";
-        const src = (node as HTMLImageElement).getAttribute("src") || "";
+        const alt = node.getAttribute("alt") || "";
+        const src = node.getAttribute("src") || "";
         return `![${alt}](${src})`;
       },
     });
@@ -74,12 +108,14 @@ function Page() {
       replacement: (_, node) => {
         const rows = Array.from(node.querySelectorAll("tr"));
         let output = "";
-        const headers = Array.from(rows[0].querySelectorAll("th, td"));
-        output += headers.map((cell) => cell.textContent).join(" | ") + "\n";
-        output += headers.map(() => "---").join(" | ") + "\n";
-        for (let i = 1; i < rows.length; i++) {
-          const cells = Array.from(rows[i].querySelectorAll("td"));
-          output += cells.map((cell) => cell.textContent).join(" | ") + "\n";
+        if (rows.length > 0) {
+          const headers = Array.from(rows[0].querySelectorAll("th, td"));
+          output += headers.map((cell) => cell.textContent).join(" | ") + "\n";
+          output += headers.map(() => "---").join(" | ") + "\n";
+          for (let i = 1; i < rows.length; i++) {
+            const cells = Array.from(rows[i].querySelectorAll("td"));
+            output += cells.map((cell) => cell.textContent).join(" | ") + "\n";
+          }
         }
         return output + "\n";
       },
@@ -88,73 +124,105 @@ function Page() {
     return service;
   }, []);
 
+  // Debounced mode switching
+  const debouncedSetMode = useCallback(debounce((newMode) => setMode(newMode), 100), []);
+
   // Initialize Tiptap editor
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        fontFamily: false,
+      }),
       Image.configure({ inline: true, allowBase64: true }),
       Underline,
       TextStyle,
-      Color.configure({ types: ["textStyle"] }),
+      FontFamily.configure({
+        types: ['textStyle'],
+      }),
+      Color.configure({ types: [TextStyle.name] }),
+      Highlight.configure({ multicolor: true }),
       Link.configure({ openOnClick: false }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Highlight.configure({ multicolor: true }),
       Placeholder.configure({ placeholder: "Write something amazing..." }),
       CharacterCount.configure({ limit: 10000 }),
-      FontFamily,
-      FontSize,
       Youtube.configure({ inline: false, controls: true }),
       Dropcursor,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
       TableCell,
-      CodeBlockLowlight.configure({ lowlight }),
+      CodeBlockLowlight.configure({ lowlight: lowlight }),
     ],
     content: "",
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none min-h-[300px] p-4 bg-white dark:bg-gray-800 rounded-b-lg", // Fixed incomplete class
+          "prose prose-sm sm:prose-base lg:prose-base xl:prose-lg m-5 focus:outline-none min-h-[400px] p-4 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-b-lg",
       },
     },
     onUpdate: ({ editor }) => {
-      if (mode === "wysiwyg") {
-        const html = editor.getHTML();
-        const markdown = turndownService.turndown(html);
-        setMarkdownContent(markdown);
+      if (mode === "wysiwyg" && !editor.isDestroyed) {
+        try {
+          const html = editor.getHTML();
+          const markdown = turndownService.turndown(html);
+          setMarkdownContent(markdown);
+        } catch (error) {
+          console.error("Error updating markdown content:", error);
+        }
       }
     },
+    immediate: mode === "wysiwyg", // Only initialize in wysiwyg mode
   });
 
   // Sync Markdown to WYSIWYG
   useEffect(() => {
-    if (mode === "wysiwyg" && editor && markdownContent) {
-      const parseResult = marked.parse(markdownContent);
-      if (typeof parseResult === "string") {
-        const html = DOMPurify.sanitize(parseResult);
-        editor.commands.setContent(html);
-      } else if (parseResult instanceof Promise) {
-        parseResult.then((result) => {
-          const html = DOMPurify.sanitize(result);
-          editor.commands.setContent(html);
+    let isMounted = true;
+    if (mode === "wysiwyg" && editor && !editor.isDestroyed && markdownContent) {
+      try {
+        marked.parse(markdownContent, (err, html) => {
+          if (!err && editor && !editor.isDestroyed && isMounted) {
+            const sanitized = DOMPurify.sanitize(html);
+            editor.commands.setContent(sanitized);
+          }
         });
+      } catch (error) {
+        console.error("Error syncing markdown to editor:", error);
       }
     }
+    return () => {
+      isMounted = false;
+    };
   }, [mode, editor, markdownContent]);
+
+  // Cleanup on mode switch
+  useEffect(() => {
+    setShowFontDropdown(false);
+    setShowColorPicker(false);
+
+    if (mode !== "wysiwyg" && editor && !editor.isDestroyed) {
+      try {
+        const html = editor.getHTML();
+        const markdown = turndownService.turndown(html);
+        setMarkdownContent(markdown);
+        editor.destroy(); // Explicitly destroy editor
+      } catch (error) {
+        console.error("Error saving content on mode switch:", error);
+      }
+    }
+  }, [mode, editor, turndownService]);
 
   // Set link
   const setLink = useCallback(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     const previousUrl = editor.getAttributes("link").href || "";
-    const url = window.prompt("URL", previousUrl);
+    const url = window.prompt("Enter URL", previousUrl);
     if (url === null) return;
     if (url === "") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
     if (!isValidUrl(url)) {
-      setError("Invalid URL. Please enter a valid URL.");
+      setError("Invalid URL.");
       return;
     }
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
@@ -162,24 +230,23 @@ function Page() {
   }, [editor]);
 
   // Add image to editor
-  const addImageToEditor = useCallback(
-    (url: string) => {
-      if (!editor) return;
-      if (!isValidUrl(url)) {
-        setError("Invalid image URL. Please enter a valid URL.");
-        return;
-      }
-      editor.commands.setImage({ src: url });
-      setError("");
-    },
-    [editor],
-  );
+  const addImageToEditor = useCallback(() => {
+    if (!editor || editor.isDestroyed || !inlineImageUrl) return;
+    if (!isValidUrl(inlineImageUrl)) {
+      setError("Invalid image URL.");
+      return;
+    }
+    editor.commands.setImage({ src: inlineImageUrl });
+    setShowImageModal(false);
+    setInlineImageUrl("");
+    setError("");
+  }, [editor, inlineImageUrl]);
 
   // Add video to editor
   const addVideoToEditor = useCallback(() => {
-    if (!editor || !videoUrl) return;
+    if (!editor || editor.isDestroyed || !videoUrl) return;
     if (!isValidYouTubeUrl(videoUrl)) {
-      setError("Invalid YouTube URL. Please enter a valid YouTube URL.");
+      setError("Invalid YouTube URL.");
       return;
     }
     editor.commands.setYoutubeVideo({ src: videoUrl });
@@ -188,8 +255,34 @@ function Page() {
     setError("");
   }, [editor, videoUrl]);
 
+  // Font family change
+  const changeFontFamily = useCallback((fontFamily) => {
+    if (!editor || editor.isDestroyed) return;
+    try {
+      if (fontFamily === "") {
+        editor.chain().focus().unsetFontFamily().run();
+      } else {
+        editor.chain().focus().setFontFamily(fontFamily).run();
+      }
+      setShowFontDropdown(false);
+    } catch (error) {
+      console.error("Error changing font family:", error);
+    }
+  }, [editor]);
+
+  // Change text color
+  const changeTextColor = useCallback((color) => {
+    if (!editor || editor.isDestroyed) return;
+    try {
+      editor.chain().focus().setColor(color).run();
+      setShowColorPicker(false);
+    } catch (error) {
+      console.error("Error changing text color:", error);
+    }
+  }, [editor]);
+
   // URL validation
-  const isValidUrl = (url: string) => {
+  const isValidUrl = (url) => {
     try {
       new URL(url);
       return true;
@@ -198,15 +291,12 @@ function Page() {
     }
   };
 
-  const isValidYouTubeUrl = (url: string) => {
-    return (
-      isValidUrl(url) &&
-      (url.includes("youtube.com") || url.includes("youtu.be"))
-    );
+  const isValidYouTubeUrl = (url) => {
+    return isValidUrl(url) && (url.includes("youtube.com") || url.includes("youtu.be"));
   };
 
   // Submit form
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
@@ -225,11 +315,11 @@ function Page() {
       if (response.status === 201) {
         router.push("/");
       } else {
-        setError("Failed to create blog post. Please try again.");
+        setError("Failed to create blog post.");
       }
     } catch (error) {
-      console.error("Error creating blog:", error);
-      setError("Failed to create blog post. Please try again.");
+      setError("Failed to create blog post.");
+      console.error("Error creating blog post:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -237,21 +327,20 @@ function Page() {
 
   // Convert editor content to Markdown
   const convertEditorContentToMarkdown = () => {
-    if (editor) {
-      const html = editor.getHTML();
-      const markdown = turndownService.turndown(html);
-      setMarkdownContent(markdown);
-      setMode("markdown");
+    if (editor && !editor.isDestroyed) {
+      try {
+        const html = editor.getHTML();
+        const markdown = turndownService.turndown(html);
+        setMarkdownContent(markdown);
+        debouncedSetMode("markdown");
+      } catch (error) {
+        console.error("Error converting to markdown:", error);
+      }
     }
   };
 
-  // Loading state
-  if (!editor && mode === "wysiwyg") {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-lg text-gray-600 dark:text-gray-300">Loading editor...</div>
-      </div>
-    );
+  if (mode === "wysiwyg" && !editor) {
+    return <div className="flex justify-center items-center h-screen">Loading editor...</div>;
   }
 
   return (
@@ -282,11 +371,9 @@ function Page() {
           <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
             <button
               type="button"
-              onClick={() => setMode("wysiwyg")}
+              onClick={() => debouncedSetMode("wysiwyg")}
               className={`px-4 py-2 font-medium text-sm ${
-                mode === "wysiwyg"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                mode === "wysiwyg" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
               }`}
               aria-label="Switch to Rich Text mode"
             >
@@ -294,11 +381,9 @@ function Page() {
             </button>
             <button
               type="button"
-              onClick={() => setMode("markdown")}
+              onClick={() => debouncedSetMode("markdown")}
               className={`px-4 py-2 font-medium text-sm ${
-                mode === "markdown"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                mode === "markdown" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
               }`}
               aria-label="Switch to Markdown mode"
             >
@@ -306,11 +391,9 @@ function Page() {
             </button>
             <button
               type="button"
-              onClick={() => setMode("preview")}
+              onClick={() => debouncedSetMode("preview")}
               className={`px-4 py-2 font-medium text-sm ${
-                mode === "preview"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                mode === "preview" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
               }`}
               aria-label="Switch to Preview mode"
             >
@@ -320,7 +403,7 @@ function Page() {
               <button
                 type="button"
                 onClick={convertEditorContentToMarkdown}
-                className="ml-auto px-4 py-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                className="ml-auto px-4 py-2 text-sm text-blue-600"
                 aria-label="Convert to Markdown"
               >
                 Convert to Markdown
@@ -328,416 +411,288 @@ function Page() {
             )}
           </div>
 
+          {/* Optional Error Boundary (uncomment if needed) */}
+          {/* <EditorErrorBoundary> */}
           {mode === "wysiwyg" && editor && (
             <>
-              <BubbleMenu
-                editor={editor}
-                tippyOptions={{ duration: 100 }}
-                className="flex bg-white dark:bg-gray-800 p-1 border border-gray-200 dark:border-gray-700 rounded shadow-lg"
-              >
+              <BubbleMenu editor={editor} className="flex bg-white dark:bg-gray-800 p-1 border rounded shadow-lg">
                 <button
                   onClick={() => editor.chain().focus().toggleBold().run()}
-                  className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                    editor.isActive("bold") ? "bg-gray-200 dark:bg-gray-600" : ""
-                  }`}
+                  className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("bold") ? "bg-gray-200" : ""}`}
                   title="Bold"
-                  aria-label="Toggle bold"
                 >
                   <strong>B</strong>
                 </button>
                 <button
                   onClick={() => editor.chain().focus().toggleItalic().run()}
-                  className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                    editor.isActive("italic") ? "bg-gray-200 dark:bg-gray-600" : ""
-                  }`}
+                  className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("italic") ? "bg-gray-200" : ""}`}
                   title="Italic"
-                  aria-label="Toggle italic"
                 >
                   <em>I</em>
                 </button>
                 <button
                   onClick={() => editor.chain().focus().toggleUnderline().run()}
-                  className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                    editor.isActive("underline") ? "bg-gray-200 dark:bg-gray-600" : ""
-                  }`}
+                  className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("underline") ? "bg-gray-200" : ""}`}
                   title="Underline"
-                  aria-label="Toggle underline"
                 >
                   <u>U</u>
                 </button>
                 <button
                   onClick={setLink}
-                  className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                    editor.isActive("link") ? "bg-gray-200 dark:bg-gray-600" : ""
-                  }`}
+                  className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("link") ? "bg-gray-200" : ""}`}
                   title="Link"
-                  aria-label="Insert or edit link"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"
-                    />
-                  </svg>
+                  🔗
                 </button>
               </BubbleMenu>
 
-              <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 mb-2">
+              <div className="w-full border rounded-lg bg-gray-50 mb-2">
                 <div className="flex flex-wrap items-center gap-2 p-2">
+                  {/* Font Family Dropdown */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowFontDropdown(!showFontDropdown)}
+                      className="p-2 rounded hover:bg-gray-200 border bg-white min-w-[120px] text-left"
+                      title="Font Family"
+                    >
+                      {editor.getAttributes('textStyle').fontFamily ? 
+                        fontFamilies.find(f => f.value === editor.getAttributes('textStyle').fontFamily)?.name || 'Custom' 
+                        : 'Default'}
+                      <span className="ml-2">▼</span>
+                    </button>
+                    {showFontDropdown && (
+                      <div className="absolute top-full left-0 mt-1 bg-white border rounded shadow-lg z-10 min-w-[200px]">
+                        {fontFamilies.map((font) => (
+                          <button
+                            key={font.name}
+                            type="button"
+                            onClick={() => changeFontFamily(font.value)}
+                            className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+                            style={{ fontFamily: font.value }}
+                          >
+                            {font.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Text Color */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowColorPicker(!showColorPicker)}
+                      className="p-2 rounded hover:bg-gray-200 border bg-white"
+                      title="Text Color"
+                    >
+                      <span 
+                        className="inline-block w-4 h-4 border rounded"
+                        style={{ backgroundColor: editor.getAttributes('textStyle').color || '#000000' }}
+                      ></span>
+                      <span className="ml-1">A</span>
+                    </button>
+                    {showColorPicker && (
+                      <div className="absolute top-full left-0 mt-1 bg-white border rounded shadow-lg z-10 p-2">
+                        <div className="grid grid-cols-5 gap-1">
+                          {colors.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() => changeTextColor(color)}
+                              className="w-6 h-6 rounded border hover:scale-110 transition-transform"
+                              style={{ backgroundColor: color }}
+                              title={color}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => changeTextColor('#000000')}
+                          className="mt-2 px-2 py-1 text-xs bg-gray-100 rounded w-full"
+                        >
+                          Reset Color
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Existing buttons */}
                   <button
                     type="button"
                     onClick={() => editor.chain().focus().toggleBold().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("bold") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("bold") ? "bg-gray-200" : ""}`}
                     title="Bold"
-                    aria-label="Toggle bold"
                   >
                     <strong>B</strong>
                   </button>
                   <button
                     type="button"
                     onClick={() => editor.chain().focus().toggleItalic().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("italic") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("italic") ? "bg-gray-200" : ""}`}
                     title="Italic"
-                    aria-label="Toggle italic"
                   >
                     <em>I</em>
                   </button>
                   <button
                     type="button"
                     onClick={() => editor.chain().focus().toggleUnderline().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("underline") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("underline") ? "bg-gray-200" : ""}`}
                     title="Underline"
-                    aria-label="Toggle underline"
                   >
                     <u>U</u>
                   </button>
                   <button
                     type="button"
-                    onClick={() => editor.chain().focus().toggleStrike().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("strike") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
-                    title="Strikethrough"
-                    aria-label="Toggle strikethrough"
+                    onClick={() => editor.chain().focus().toggleHighlight().run()}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive("highlight") ? "bg-gray-200" : ""}`}
+                    title="Highlight"
                   >
-                    <s>S</s>
+                    🖍️
                   </button>
                   <button
                     type="button"
-                    onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("codeBlock") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
-                    title="Code Block"
-                    aria-label="Insert code block"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 6h12v12H6zM3 9l3-3 3 3zm12 0l3-3 3 3z"
-                      />
-                    </svg>
-                  </button>
-
-                  <select
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === "paragraph") {
-                        editor.chain().focus().setParagraph().run();
-                      } else {
-                        editor
-                          .chain()
-                          .focus()
-                          .toggleHeading({ level: parseInt(value) as any })
-                          .run();
-                      }
-                    }}
-                    value={
-                      editor.isActive("heading", { level: 1 })
-                        ? "1"
-                        : editor.isActive("heading", { level: 2 })
-                        ? "2"
-                        : editor.isActive("heading", { level: 3 })
-                        ? "3"
-                        : "paragraph"
-                    }
-                    className="p-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    aria-label="Select text type"
-                  >
-                    <option value="paragraph">Paragraph</option>
-                    <option value="1">Heading 1</option>
-                    <option value="2">Heading 2</option>
-                    <option value="3">Heading 3</option>
-                  </select>
-
-                  <button
-                    type="button"
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("bulletList") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
-                    title="Bullet List"
-                    aria-label="Toggle bullet list"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M8 6h10M8 12h10M8 18h10M4 6h2M4 12h2M4 18h2"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive("orderedList") ? "bg-gray-200 dark:bg-gray-600" : ""
-                    }`}
-                    title="Numbered List"
-                    aria-label="Toggle numbered list"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M8 6h10M8 12h10M8 18h10M4 6h2M4 12h2M4 18h2"
-                      />
-                    </svg>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => editor.chain().focus().setTextAlign("left").run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive({ textAlign: "left" })
-                        ? "bg-gray-200 dark:bg-gray-600"
-                        : ""
-                    }`}
-                    title="Align Left"
-                    aria-label="Align text left"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => editor.chain().focus().setTextAlign("center").run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive({ textAlign: "center" })
-                        ? "bg-gray-200 dark:bg-gray-600"
-                        : ""
-                    }`}
-                    title="Align Center"
-                    aria-label="Align text center"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M4 6h16M7 10h10M7 14h10M4 18h16"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => editor.chain().focus().setTextAlign("right").run()}
-                    className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${
-                      editor.isActive({ textAlign: "right" })
-                        ? "bg-gray-200 dark:bg-gray-600"
-                        : ""
-                    }`}
-                    title="Align Right"
-                    aria-label="Align text right"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M4 6h16M4 10h10M4 14h10M4 18h16"
-                      />
-                    </svg>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const url = window.prompt("Enter the URL of the image:");
-                      if (url) addImageToEditor(url);
-                    }}
-                    className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                    onClick={() => setShowImageModal(true)}
+                    className="p-2 rounded hover:bg-gray-200"
                     title="Insert Image"
-                    aria-label="Insert image"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M3 3h18v18H3zM7 8h10v8H7z"
-                      />
-                    </svg>
+                    🖼️
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowVideoModal(true)}
-                    className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                    className="p-2 rounded hover:bg-gray-200"
                     title="Insert Video"
-                    aria-label="Insert YouTube video"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M8 6v12l7-6z"
-                      />
-                    </svg>
+                    🎥
                   </button>
                   <button
                     type="button"
-                    onClick={() =>
-                      editor
-                        .chain()
-                        .focus()
-                        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-                        .run()
-                    }
-                    className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
-                    title="Insert Table"
-                    aria-label="Insert table"
+                    onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive({ textAlign: 'left' }) ? "bg-gray-200" : ""}`}
+                    title="Align Left"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeWidth="2"
-                        d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"
-                      />
-                    </svg>
+                    ⬅️
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive({ textAlign: 'center' }) ? "bg-gray-200" : ""}`}
+                    title="Align Center"
+                  >
+                    ↔️
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                    className={`p-2 rounded hover:bg-gray-200 ${editor.isActive({ textAlign: 'right' }) ? "bg-gray-200" : ""}`}
+                    title="Align Right"
+                  >
+                    ➡️
                   </button>
                 </div>
               </div>
 
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg min-h-[300px]">
+              <div className="border rounded-lg min-h-[400px]">
                 <EditorContent editor={editor} />
               </div>
+
+              {editor && !editor.isDestroyed && (
+                <div className="text-sm text-gray-500 text-right">
+                  {editor.storage.characterCount.characters()}/{editor.options.extensions.find(ext => ext.name === 'characterCount')?.options.limit || 10000} characters
+                </div>
+              )}
             </>
           )}
+          {/* </EditorErrorBoundary> */}
 
           {mode === "markdown" && (
             <div className="flex flex-col space-y-4">
               <textarea
-                className="w-full h-96 p-4 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100"
+                className="w-full h-96 p-4 border rounded-lg font-mono text-sm"
                 value={markdownContent}
                 onChange={(e) => setMarkdownContent(e.target.value)}
                 placeholder="Write in markdown format..."
                 aria-label="Markdown editor"
               />
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <div className="border rounded-lg p-4">
                 <h3 className="text-lg font-medium mb-2">Preview</h3>
-                <MarkdownRenderer content={markdownContent} />
+                <ReactMarkdown>{markdownContent}</ReactMarkdown>
               </div>
             </div>
           )}
 
           {mode === "preview" && (
-            <div className="flex flex-col space-y-4">
-              <div className="prose max-w-none p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                {editor ? (
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(editor.getHTML()),
-                    }}
-                  />
-                ) : (
-                  <MarkdownRenderer content={markdownContent} />
-                )}
+            <div className="prose max-w-none p-4 border rounded-lg">
+              {mode === "preview" && editor && !editor.isDestroyed ? (
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(editor.getHTML()) }} />
+              ) : (
+                <ReactMarkdown>{markdownContent}</ReactMarkdown>
+              )}
+            </div>
+          )}
+
+          {/* Image Modal */}
+          {showImageModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">Insert Image</h3>
+                <input
+                  type="text"
+                  placeholder="Enter image URL"
+                  className="w-full p-2 border rounded mb-4"
+                  value={inlineImageUrl}
+                  onChange={(e) => setInlineImageUrl(e.target.value)}
+                  aria-label="Image URL"
+                />
+                <CldUploadWidget
+                  uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                  options={{ sources: ["local"], multiple: false, maxFiles: 1 }}
+                  onSuccess={(result) => {
+                    const url = result?.info?.secure_url || "";
+                    if (url) {
+                      setInlineImageUrl(url);
+                      setError("");
+                    } else {
+                      setError("Image upload failed.");
+                    }
+                  }}
+                  onError={() => setError("Image upload failed.")}
+                >
+                  {({ open }) => (
+                    <button
+                      type="button"
+                      onClick={() => open()}
+                      className="w-full p-2 bg-gray-200 rounded mb-4"
+                      aria-label="Upload image"
+                    >
+                      Upload Image
+                    </button>
+                  )}
+                </CldUploadWidget>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImageModal(false)}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                    aria-label="Cancel"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addImageToEditor}
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                    aria-label="Insert image"
+                  >
+                    Insert
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
+          {/* Video Modal */}
           {showVideoModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -745,7 +700,7 @@ function Page() {
                 <input
                   type="text"
                   placeholder="Enter YouTube URL"
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-4 text-gray-900 dark:text-gray-100"
+                  className="w-full p-2 border rounded mb-4"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
                   aria-label="YouTube video URL"
@@ -754,16 +709,16 @@ function Page() {
                   <button
                     type="button"
                     onClick={() => setShowVideoModal(false)}
-                    className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-500"
-                    aria-label="Cancel video insertion"
+                    className="px-4 py-2 bg-gray-200 rounded"
+                    aria-label="Cancel"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={addVideoToEditor}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    aria-label="Insert YouTube video"
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                    aria-label="Insert video"
                   >
                     Insert
                   </button>
@@ -773,57 +728,37 @@ function Page() {
           )}
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Featured Image (optional)
-            </label>
+            <label className="text-sm font-medium">Featured Image (optional)</label>
             <CldUploadWidget
               uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-              options={{
-                sources: ["local"],
-                multiple: false,
-                maxFiles: 1,
-              }}
+              options={{ sources: ["local"], multiple: false, maxFiles: 1 }}
               onSuccess={(result) => {
-                const url =
-                  result?.info && typeof result.info === "object" && result.info.secure_url
-                    ? result.info.secure_url
-                    : "";
+                const url = result?.info?.secure_url || "";
                 if (url) {
                   setImageUrl(url);
                   setError("");
                 } else {
-                  setError("Image upload failed. Please try again.");
+                  setError("Image upload failed.");
                 }
               }}
-              onError={(error) => {
-                console.error("Upload error:", error);
-                setError("Image upload failed. Please try again.");
-              }}
+              onError={() => setError("Image upload failed.")}
             >
               {({ open }) => (
                 <>
                   <button
                     type="button"
                     onClick={() => open()}
-                    className="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition"
+                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md"
                     aria-label={imageUrl ? "Change featured image" : "Upload featured image"}
                   >
                     {imageUrl ? "Change Featured Image" : "Upload Featured Image"}
                   </button>
                   {imageUrl && (
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Featured image preview:
-                      </p>
-                      <img
-                        src={imageUrl.replace(
-                          "/upload/",
-                          "/upload/w_150,h_100,c_fill,q_auto,f_auto/",
-                        )}
-                        alt="Featured image preview"
-                        className="mt-2 max-h-40 rounded-md object-cover"
-                      />
-                    </div>
+                    <img
+                      src={imageUrl.replace("/upload/", "/upload/w_150,h_100,c_fill,q_auto,f_auto/")}
+                      alt="Featured image preview"
+                      className="mt-2 max-h-40 rounded-md object-cover"
+                    />
                   )}
                 </>
               )}
@@ -833,10 +768,8 @@ function Page() {
           <button
             type="submit"
             disabled={isSubmitting || (mode === "wysiwyg" && !editor)}
-            className={`bg-black dark:bg-gray-900 text-white mt-4 px-4 py-2 rounded-md transition-all duration-300 ${
-              isSubmitting
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-800 dark:hover:bg-gray-700"
+            className={`bg-black text-white mt-4 px-4 py-2 rounded-md ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-800"
             }`}
             aria-label="Publish blog post"
           >
@@ -844,8 +777,36 @@ function Page() {
           </button>
         </form>
       </div>
+
+      {/* Click outside handlers */}
+      {(showFontDropdown || showColorPicker) && (
+        <div 
+          className="fixed inset-0 z-5" 
+          onClick={() => {
+            setShowFontDropdown(false);
+            setShowColorPicker(false);
+          }}
+        />
+      )}
     </div>
   );
 }
+
+
+class EditorErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong with the editor. Please try again.</div>;
+    }
+    return this.props.children;
+  }
+}
+
 
 export default Page;

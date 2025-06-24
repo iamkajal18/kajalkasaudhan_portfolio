@@ -1,6 +1,16 @@
 import mongoose from "mongoose";
 
 const idea = new mongoose.Schema({
+  author:{
+    type:String
+  },
+  profilePhoto:{
+    type:String
+  },
+  authorEmail:{
+    type:String
+  },
+  
   title: {
     type: String,
     required: true

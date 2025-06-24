@@ -1,12 +1,11 @@
 
-import PlacementPre from '@/components/PlacementPre'
+import Algorithms from '@/components/Algorithms'
 import React from 'react'
 
 function page() {
   return (
     <div>
-     <PlacementPre/>
-       
+      <Algorithms/>
     </div>
   )
 }
