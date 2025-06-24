@@ -30,4 +30,3 @@ const AboutSection = () => {
 };
 
 export default AboutSection;
-// isi ko chalati thi na haa to isme kyu error hai .. tum error nhi dekhti ho kya last ma ek stah
