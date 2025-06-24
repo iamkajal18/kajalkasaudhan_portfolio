@@ -11,6 +11,7 @@ module.exports = {
   },
   plugins: [
     require("flowbite/plugin"),       // Flowbite Plugin
-    require("@shadcn/ui/plugin"),    // ShadCN Plugin
+    require("@shadcn/ui/plugin"),
+    require('flowbite-typography'),   
   ],
 };

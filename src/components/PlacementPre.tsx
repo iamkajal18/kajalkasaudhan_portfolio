@@ -9,9 +9,9 @@ const guidesData = [
   {
     id: 1,
     title: "Verbal Ability",
-    image: "/images/Verbal.png",
+    image: "/Verbal.png",
     alt: "Verbal Ability Guide",
-    href: "/guides/verbal",
+    href: "/verbal",
     progress: 60,
     duration: "4h",
     category: "Placement Prep",
@@ -65,9 +65,9 @@ const guidesData = [
   {
     id: 5,
     title: "Algorithms",
-    image: "/images/Algorithms.png",
+    image: "Algorithum.png",
     alt: "Algorithms Guide",
-    href: "/guides/algorithms",
+    href: "/algorithm",
     progress: 10,
     duration: "8h",
     category: "Coding",
@@ -250,11 +250,10 @@ const CourseCard = ({
     <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
       <Link href={href}>
         <div className="relative w-full h-40 overflow-hidden rounded-t-2xl">
-          <Image
+          <img
             src={image}
             alt={alt}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 group-hover:scale-110 w-full h-full"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         </div>

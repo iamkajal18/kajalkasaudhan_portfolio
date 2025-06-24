@@ -1,52 +1,34 @@
-"use client"
-import Head from "next/head";
-import { ReactNode } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SessionProvider } from "next-auth/react" 
-import toast, { Toaster } from 'react-hot-toast';
-import './globals.css';
-import { useEffect, useState } from "react";
-// import { Analytics } from "@vercel/analytics/react"
-import { ThemeProvider } from '../components/ThemeContext';
-// import { SpeedInsights } from "@vercel/speed-insights/next"
-// import { metadata } from "./metadata";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
+// Load Google Fonts
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
 
-  useEffect(() => {
-    const hasVisited = localStorage.getItem("hasVisited");
-
-    if (!hasVisited) {
-      toast.success("🎉 Welcome to LearnLive!");
-      localStorage.setItem("hasVisited", "true");
-      setIsFirstVisit(true);
-    }
-  }, []);
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      
-      <body>
-      
-        <SessionProvider>
-        
-        <ThemeProvider>
-        
-       
-
-        <Navbar />
-      <Toaster/>
-          <div className="min-h-screen">{children}</div>
-        
-        
-        
-        <Footer />
-        </ThemeProvider>
-        </SessionProvider>
-       
-        
+    <html lang="en" dir="ltr">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

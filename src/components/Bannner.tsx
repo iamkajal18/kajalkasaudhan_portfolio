@@ -29,11 +29,11 @@ function Banner() {
         </button>
       
 
-<Link href="/live-class">
+<Link href="/ai-interview">
   <button
     className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-700 rounded-md w-28 h-12 text-white mx-2 my-2 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105"
   >
-    Live Class
+    Ai Interview
   </button>
 </Link>
       </div>

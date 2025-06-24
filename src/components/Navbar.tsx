@@ -197,11 +197,11 @@ const Navbar: React.FC = () => {
    
 
     <NavItem
-      href="/live-class"
+      href="/ai-interview"
       theme={theme}
       icon={<Video size={18} />}
     >
-      Live Classes
+      Ai Interview
     </NavItem>
 
     <NavItem href="/placementpre" theme={theme} icon={<MessageSquare size={18} />}>

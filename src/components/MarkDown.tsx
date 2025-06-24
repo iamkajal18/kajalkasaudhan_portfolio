@@ -1,13 +1,13 @@
-// @/components/MarkDown.jsx
+// src/components/MarkDown.jsx
 import React from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
-interface MarkdownRendererProps {
+interface MarkdownProps {
   content: string;
 }
 
-export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+const MarkdownRenderer = ({ content }: MarkdownProps) => {
   const [html, setHtml] = React.useState<string>("");
 
   React.useEffect(() => {
@@ -28,3 +28,5 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
     />
   );
 };
+
+export default MarkdownRenderer;
