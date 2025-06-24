@@ -1,37 +1,34 @@
-// app/layout.tsx
-"use client";
-
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ReactNode, useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SessionProvider } from "next-auth/react";
-import toast, { Toaster } from "react-hot-toast";
-import "react-markdown-editor-lite/lib/index.css";
-import { ThemeProvider } from "@/components/ThemeContext";
-export default function Layout({ children }: { children: ReactNode }) {
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
-  useEffect(() => {
-    const hasVisited = localStorage.getItem("hasVisited");
-    if (!hasVisited) {
-      toast.success("🎉 Welcome to LearnLive!");
-      localStorage.setItem("hasVisited", "true");
-      setIsFirstVisit(true);
-    }
-  }, []);
+// Load Google Fonts
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
 
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+// ye chal kaise rha hai bina page.tsx ke 
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>
-        <SessionProvider>
-          <ThemeProvider>
-            <Navbar />
-            <Toaster />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </ThemeProvider>
-        </SessionProvider>
+    <html lang="en" dir="ltr">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
