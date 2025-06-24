@@ -29,7 +29,7 @@ export const skills: TechSkill[] = [
   { name: "Vercel", level: 70, icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/vercel.svg" },
   { name: "GitHub", level: 80, icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/github.svg" }, // Placeholder icon (Radix UI, related to Shadcn ecosystem)
 ];
-export const projects: Project[] = [
+export const projects = [
     {
         id: 1,
         title: "LearnLive - LearnLive Platform Guidance and Success",

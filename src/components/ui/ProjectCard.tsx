@@ -19,11 +19,11 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-100 dark:border-gray-700 h-full flex flex-col relative"
         >
             {/* Ribbon for featured projects */}
-            {project.isFeatured && (
+            {project.isFeatured ? (
                 <div className="absolute -right-8 -top-4 w-32 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold py-1 px-2 text-center rotate-45 shadow-md z-10">
                     Featured
                 </div>
-            )}
+            ):(null)}
 
             {/* Image container with overlay */}
             <div className="relative h-56 w-full overflow-hidden">

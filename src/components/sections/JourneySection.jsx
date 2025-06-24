@@ -5,7 +5,7 @@ import { education } from '@/data/personalInfo';
 
 const JourneySection = () => {
     return (
-        <section id="background" className="py-16 md:py-8">
+        <section id="education" className="education py-16 md:py-8">
             <div className="max-w-6xl mx-auto px-4">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
@@ -19,7 +19,7 @@ const JourneySection = () => {
   <span className="relative z-10">My Academic Journey</span>
 </h2>
                 </motion.h2>
-
+{/*  */}what is the issue ? sayad abhi ko kar rhe tha toh bs name 
                 <div className="relative">
                     {/* Vertical timeline line */}
                     <div className="absolute left-4 md:left-1/2 h-full w-0.5 bg-gradient-to-b from-blue-400 to-purple-500 dark:from-blue-600 dark:to-purple-700 transform -translate-x-1/2"></div>

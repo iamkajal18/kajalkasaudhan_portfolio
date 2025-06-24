@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
 });
-
+// ye chal kaise rha hai bina page.tsx ke 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

@@ -1,4 +1,8 @@
+import { ReactNode } from "react";
+
 export interface Project {
+    category: ReactNode;
+    isFeatured: any;
     id: number;
     title: string;
     description: string;
