@@ -1,7 +1,7 @@
 "use client";
 
-import SectionHeading from '@/components/ui/SectionHeading';
-import AchievementCard from '@/components/ui/AchievementCard';
+import SectionHeading from './SectionHeading';
+import AchievementCard from './AchievementCard';
 import { achievements } from '@/data/personalInfo';
 
 const AchievementsSection = () => {

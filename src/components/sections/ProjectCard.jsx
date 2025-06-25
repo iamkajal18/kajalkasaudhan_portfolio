@@ -2,14 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Project } from '@/types';
 
-interface ProjectCardProps {
-    project: Project;
-    index: number;
-}
-
-const ProjectCard = ({ project, index }: ProjectCardProps) => {
+const ProjectCard = ({ project, index }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}

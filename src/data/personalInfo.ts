@@ -65,18 +65,21 @@ export const education: Education[] = [
         institution: "Goel Institute of Technology and Management, Lucknow",
         period: "2022 - 2026 (Expected)",
         description: "Focusing on Data Structures and Algorithms (C), Python, Java, Computer Organization & Architecture, and Operating Systems. Currently building scalable web applications.",
+        gpa:"8.2"
     },
     {
         degree: "Intermediate in Science",
         institution: "Blooming Bud's School",
         period: "2020 - 2022",
         description: "Studied Physics, Chemistry, and Mathematics with a focus on analytical skills and problem-solving.",
+        gpa:"A"
     },
     {
         degree: "High School",
         institution: "Blooming Bud's School",
         period: "2018 - 2020",
         description: "Completed with a focus on Science and Mathematics.",
+        gpa:"A"
     },
 ];
 

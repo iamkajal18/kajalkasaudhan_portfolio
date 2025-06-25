@@ -1,8 +1,8 @@
 "use client";
 
 import { PersonalInfo } from '@/types';
-import SectionHeading from '@/components/ui/SectionHeading';
-import ContactForm from '@/components/ui/ContactForm';
+import SectionHeading from './SectionHeading';
+import ContactForm from './ContactForm';
 
 interface ContactSectionProps {
     personalInfo: PersonalInfo;

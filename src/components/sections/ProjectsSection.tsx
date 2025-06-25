@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import ProjectCard from '@/components/ui/ProjectCard';
-import SectionHeading from '@/components/ui/SectionHeading';
+import ProjectCard from './ProjectCard';
+import SectionHeading from './SectionHeading';
 import { projects } from '@/data/personalInfo';
 
 const ProjectsSection = () => {

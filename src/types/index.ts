@@ -13,6 +13,7 @@ export interface Education {
     institution: string;
     period: string;
     description: string;
+    gpa:string;
 }
 
 export interface Experience {

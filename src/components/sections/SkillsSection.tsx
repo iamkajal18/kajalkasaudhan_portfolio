@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import SkillCard from '@/components/ui/SkillCard';
-import SectionHeading from '@/components/ui/SectionHeading';
+import SkillCard from './SkillCard';
+import SectionHeading from './SectionHeading';
 import { skills } from '@/data/personalInfo';
 
 const SkillsSection = () => {
