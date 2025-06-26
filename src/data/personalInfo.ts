@@ -53,7 +53,7 @@ export const projects: Project[] = [
         title: "Personal PortFolio",
         description: "My personal portfolio is a dynamic and responsive website built with Next.js, MongoDB, Tailwind CSS, and deployed on Vercel. It highlights my technical skills, featured projects, resume, and contact details in a clean and user-friendly design. The site serves as a central hub for showcasing my frontend development work and continuous learning journey.",
         technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB"],
-        imageUrl: "/PortFolio.png",
+        imageUrl: "/Portfolio.png",
         githubUrl: "https://github.com/iamkajal18/kajalkasaudhan_portfolio",
         liveUrl: "https://kajalkasaudhan.vercel.app/",
     },
