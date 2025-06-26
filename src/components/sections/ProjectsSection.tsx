@@ -8,12 +8,17 @@ import { projects } from '@/data/personalInfo';
 const ProjectsSection = () => {
     return (
         <section id="projects" className="py-8 md:py-16 bg-gray-50 dark:bg-gray-800/50 -mx-4 px-4 rounded-3xl">
-            <div className="max-w-6xl mx-auto">
-                <SectionHeading
-                    title="Featured Projects"
-                    subtitle="Showcasing some of my recent work. These projects demonstrate my skills in building modern, responsive web applications."
-                />
-
+            
+                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center py-8 ">
+  <h2 className="relative inline-block text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+    <span className="absolute inset-x-0 -bottom-1 h-3 bg-[#2C5D5B]/30 dark:bg-[#7ABAB5]/40 rounded-full -z-10"></span>
+    <span className="relative z-10">
+      Featured <span className="text-[#2C5D5B] dark:text-[#7ABAB5]">Projects</span>
+    </span>
+  </h2>
+  <p>Showcasing some of my recent work. These projects demonstrate my skills in building modern, responsive web applications.</p>
+</div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
                     {projects.map((project, index) => (
                         <ProjectCard key={project.id} project={project} index={index} />
@@ -40,6 +45,7 @@ const ProjectsSection = () => {
                     </a>
                 </motion.div>
             </div>
+    
         </section>
     );
 };

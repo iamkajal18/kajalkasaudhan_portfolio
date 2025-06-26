@@ -9,13 +9,18 @@ const SkillsSection = () => {
     return (
         <section
             id="skills"
-            className="py-16 md:py-24 bg-[#f5f1e6] dark:bg-gray-900/95 transition-colors duration-300"
+            className="py-16 md:py-24 bg-[#e6e1e4] dark:bg-gray-900/95 transition-colors duration-300"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <SectionHeading
-                    title="My Skills"
-                    subtitle="I bring a robust set of skills in modern web development, honed through extensive experience and continuous learning."
-                />
+                <div className="text-center">
+  <h2 className="relative inline-block text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+    <span className="absolute inset-x-0 -bottom-1 h-3 bg-[#2C5D5B]/30 dark:bg-[#7ABAB5]/40 rounded-full -z-10"></span>
+    <span className="relative z-10">
+      My <span className="text-[#2C5D5B] dark:text-[#7ABAB5]">Skill</span>
+    </span>
+  </h2>
+</div>
+
 
                 <motion.div
                     className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-16"

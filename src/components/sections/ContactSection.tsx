@@ -12,10 +12,16 @@ const ContactSection = ({ personalInfo }: ContactSectionProps) => {
     return (
         <section id="contact" className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 -mx-4 px-4 rounded-t-3xl">
             <div className="max-w-4xl mx-auto">
-                <SectionHeading
-                    title="Get In Touch"
-                    subtitle="Have a project in mind or want to collaborate? Feel free to reach out and I'll get back to you as soon as possible."
-                />
+                <div className="text-center py-8">
+  <h2 className="relative inline-block text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+    <span className="absolute inset-x-0 -bottom-1 h-3 bg-[#2C5D5B]/30 dark:bg-[#7ABAB5]/40 rounded-full -z-10"></span>
+    <span className="relative z-10">
+      Get <span className="text-[#2C5D5B] dark:text-[#7ABAB5]">In Touch</span>
+    </span>
+  </h2>
+  <p>Have a project in mind or want to collaborate? Feel free to reach out and I'll get back to you as soon as possible.</p>
+</div>
+
 
                 <div className="grid md:grid-cols-2 gap-8 mb-12">
                     <div>

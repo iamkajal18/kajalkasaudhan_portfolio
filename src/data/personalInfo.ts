@@ -32,12 +32,12 @@ export const skills: TechSkill[] = [
 export const projects: Project[] = [
     {
         id: 1,
-        title: "LearnLive - LearnLive Platform Guidance and Success",
-        description: "LearnLive is a full-stack blogging platform featuring secure authentication, role-based access, and a powerful rich-text editor. It supports AI-powered SEO, custom URLs, and MongoDB for efficient data handling. Designed to boost engagement by up to 70%, LearnLive offers a seamless content creation and sharing experience.",
+        title: "LearnZone - LearnZoon Platform Guidance and Success",
+        description: "LearnZone is a full-stack blogging platform featuring secure authentication, role-based access, and a powerful rich-text editor. It supports AI-powered SEO, custom URLs, and MongoDB for efficient data handling. Designed to boost engagement by up to 70%, LearnLive offers a seamless content creation and sharing experience.",
         technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB"],
-        imageUrl: "/LearnLive.png",
-        githubUrl: "https://github.com/iamkajal18/learnlive",
-        liveUrl: "https://learnlive.vercel.app/",
+        imageUrl: "/LearnZone.png",
+        githubUrl: "https://github.com/iamkajal18/learnzone",
+        liveUrl: "https://learnzone-kappa.vercel.app/",
     },
      {
         id: 2,
@@ -54,8 +54,8 @@ export const projects: Project[] = [
         description: "My personal portfolio is a dynamic and responsive website built with Next.js, MongoDB, Tailwind CSS, and deployed on Vercel. It highlights my technical skills, featured projects, resume, and contact details in a clean and user-friendly design. The site serves as a central hub for showcasing my frontend development work and continuous learning journey.",
         technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB"],
         imageUrl: "/PortFolio.png",
-        githubUrl: "https://github.com/iamkajal18/Jobed",
-        liveUrl: "https://jobed-theta.vercel.app/",
+        githubUrl: "https://github.com/iamkajal18/kajalkasaudhan_portfolio",
+        liveUrl: "https://kajalkasaudhan.vercel.app/",
     },
 ];
 

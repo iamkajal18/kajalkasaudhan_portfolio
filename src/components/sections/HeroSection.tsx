@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PersonalInfo } from '@/types';
-import { Briefcase, Mail, FileText } from 'lucide-react';
+import { Briefcase, FileText } from 'lucide-react';
 
 interface HeroSectionProps {
     isLoaded: boolean;
@@ -36,6 +36,7 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                 variants={staggerContainer}
                 className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-12 max-w-7xl"
             >
+                {/* Left Content */}
                 <motion.div
                     variants={fadeInUp}
                     className="md:w-3/5 text-gray-900 dark:text-gray-100"
@@ -62,24 +63,22 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                         variants={fadeInUp}
                         className="flex flex-wrap gap-4"
                     >
-                      <Link
-  href="#projects"
-  className="flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-transparent hover:text-blue-600 dark:hover:text-blue-400 border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-400 transition-all duration-300 shadow-md hover:shadow-lg"
->
-  <Briefcase className="w-5 h-5 mr-2" />
-  View Portfolio
-</Link>
+                        <Link
+                            href="#projects"
+                            className="flex items-center px-6 py-3 bg-[#2C5D5B] text-white rounded-lg hover:bg-transparent hover:text-[#2C5D5B] border-2 border-transparent hover:border-[#2C5D5B] transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
+                            <Briefcase className="w-5 h-5 mr-2" />
+                            View Portfolio
+                        </Link>
 
-<Link
-  href="#contact"
-   className="flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-transparent hover:text-blue-600 dark:hover:text-blue-400 border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-400 transition-all duration-300 shadow-md hover:shadow-lg"
->
-  <Briefcase className="w-5 h-5 mr-2" />
-  Contact Me
-</Link>
+                        <Link
+                            href="#contact"
+                            className="flex items-center px-6 py-3 bg-[#2C5D5B] text-white rounded-lg hover:bg-transparent hover:text-[#2C5D5B] border-2 border-transparent hover:border-[#2C5D5B] transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
+                            <Briefcase className="w-5 h-5 mr-2" />
+                            Contact Me
+                        </Link>
 
-
-                        
                         <a
                             href={personalInfo.resumeUrl}
                             target="_blank"
@@ -91,6 +90,8 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                         </a>
                     </motion.div>
                 </motion.div>
+
+                {/* Right Image */}
                 <motion.div
                     variants={{
                         initial: { scale: 0.9, opacity: 0 },
@@ -99,16 +100,17 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                     transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
                     className="md:w-2/5 flex justify-center"
                 >
-                    <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl overflow-hidden border-4 border-blue-500 dark:border-blue-400 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                    <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl border-4 border-[#2C5D5B] shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
                         <Image
-                            src={'/profile.png'}
+                            src="/profile.png"
                             alt={personalInfo.name}
-                            fill
+                            width={384}
+                            height={384}
                             style={{ objectFit: 'cover' }}
                             priority
                             className="rounded-2xl transition-transform duration-500 hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 dark:from-blue-500/30 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#2C5D5B]/20 dark:from-[#2C5D5B]/30 to-transparent rounded-2xl"></div>
                     </div>
                 </motion.div>
             </motion.div>
