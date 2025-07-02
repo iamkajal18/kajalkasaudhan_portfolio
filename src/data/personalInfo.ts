@@ -37,7 +37,7 @@ export const projects: Project[] = [
         technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB"],
         imageUrl: "/LearnZone.png",
         githubUrl: "https://github.com/iamkajal18/learnzone",
-        liveUrl: "https://learnzone-kappa.vercel.app/",
+        liveUrl: "https://learningzone.vercel.app/",
     },
      {
         id: 2,

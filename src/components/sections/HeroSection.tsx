@@ -102,7 +102,7 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                 >
                     <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl border-4 border-[#2C5D5B] shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
                         <Image
-                            src="/profile.png"
+                            src="/profiles.png"
                             alt={personalInfo.name}
                             width={384}
                             height={384}
