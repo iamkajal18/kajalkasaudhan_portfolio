@@ -83,30 +83,6 @@ export const education: Education[] = [
     },
 ];
 
-// export const experience: Experience[] = [
-//     {
-//         role: "Founder & Community Manager",
-//         company: "Resources and Updates",
-//         period: "2023 - Present",
-//         description: "Managing a growing community of 8,000+ members on WhatsApp and 2,500+ LinkedIn followers, providing job and internship updates. Scaled technical resources community and boosted student mentorship requests by 30%.",
-//         technologies: ["Community Management", "Content Curation", "Networking"],
-//     },
-//     {
-//         role: "Web Developer Intern",
-//         company: "Let's Code",
-//         period: "Sep 2024 - Mar 2025",
-//         description: "Worked on various web development projects, focusing on Next.js and React. Gained experience in building responsive and user-friendly applications.",
-//         technologies: ["Next.js", "React", "Tailwind CSS", "Node.js"],
-//     },
-//     {
-//         role: "Campus Ambassador",
-//         company: "Unstop",
-//         period: "Jan 2024 - Present",
-//         description: "Engaging 5,000+ students by promoting tech events and opportunities. Organized coding competitions and mentored fellow students.",
-//         technologies: ["Event Management", "Leadership", "Marketing"],
-//     },
-// ];
-
 export const achievements = [
   "1st Prize : Turbo AI Challenge GITM 2024 for building a working ML model ",
   "1st Prize : Rhythm Divine Quiz Competition GITM 2024",
