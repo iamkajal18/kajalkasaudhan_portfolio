@@ -110,7 +110,6 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                             priority
                             className="rounded-2xl transition-transform duration-500 hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#2C5D5B]/20 dark:from-[#2C5D5B]/30 to-transparent rounded-2xl"></div>
                     </div>
                 </motion.div>
             </motion.div>

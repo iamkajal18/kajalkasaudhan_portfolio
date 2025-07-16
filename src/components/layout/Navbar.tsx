@@ -37,7 +37,7 @@ const MainNavbar = () => {
     { name: 'About Me', href: '#about' },
     { name: 'Skills', href: '#skills' },
     { name: 'Projects', href: '#projects' },
-    { name: 'Blog', href: '/https://learningzone.vercel.app' },
+    { name: 'Blog', href: 'https://learningzone.vercel.app' },
     { name: 'Contact', href: '#contact' },
   ];
 
