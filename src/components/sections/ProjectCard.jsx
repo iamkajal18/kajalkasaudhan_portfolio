@@ -24,11 +24,13 @@ const ProjectCard = ({ project, index }) => {
                 <Image
                     src={project.imageUrl}
                     alt={project.title}
+                    
                     fill
                     style={{ objectFit: 'cover' }}
                     className="transition-transform duration-700 group-hover:scale-110"
-                    priority={index < 3}
+                    priority={index < 5}
                 />
+                
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
                     <div className="w-full">
                         <div className="flex flex-wrap gap-2 mb-2">

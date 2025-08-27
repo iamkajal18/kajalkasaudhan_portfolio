@@ -57,6 +57,24 @@ export const projects: Project[] = [
         githubUrl: "https://github.com/iamkajal18/kajalkasaudhan_portfolio",
         liveUrl: "https://kajalkasaudhan.vercel.app/",
     },
+     {
+        id: 4,
+        title: "SmartBriefs – AI-POWERED BOOK SUMMARIES",
+        description: "Built a Next.js & Tailwind CSS web app to transform books into AI-generated book discussions with character-based analysisand AI Chat Bot Engine, and with secure Google/Email authentication, Razorpay integration, email notifications.Designed a modern, responsive UI with dark/light mode and interactive navigation, while enhancing performance throughSSR, optimized image loading, and intelligent API caching.",
+        technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB"],
+        imageUrl: "/Book.png",
+        githubUrl: "https://github.com/iamkajal18/AI-Book-Summarized",
+        liveUrl: "https://ai-book-summarized.vercel.app/",
+    },
+    {
+        id: 5,
+        title: "Luxury Tasks Management",
+        description: "Developed a responsive to-do list application with add, delete, filter, and clear completed features.Designed an elegant UI using HTML, CSS, and JavaScript for better productivity and user experience.",
+        technologies: ["HTML, CSS, JavaScript"],
+        imageUrl: "/TODO.png",
+        githubUrl: "https://github.com/iamkajal18/TODO_List",
+        liveUrl: "https://todo-list-eta-smoky-46.vercel.app/",
+    },
 ];
 
 export const education: Education[] = [
