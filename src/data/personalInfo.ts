@@ -7,7 +7,7 @@ export const personalInfo: PersonalInfo = {
     phone: "6387486751",
     github: "https://github.com/iamkajal18",
     linkedin: "https://www.linkedin.com/in/iamkajalkasaudhan/",
-    resumeUrl: "https://drive.google.com/file/d/1pA27MZO0Yp36TKNFejy7azwasSOx1Bgh/view?usp=drive_link",
+    resumeUrl: "https://drive.google.com/file/d/1M0JPpv0L564izqk9ehzFh5JXeRZ0-MH5/view?usp=drive_link",
     bio: "I'm a 4th-year Computer Science student at Goel Institute of Technology and Management, passionate about building modern web applications with Next.js and React. I focus on creating scalable, performant, and user-friendly web experiences.",
 };
 

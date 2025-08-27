@@ -68,7 +68,7 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                             className="flex items-center px-6 py-3 bg-[#2C5D5B] text-white rounded-lg hover:bg-transparent hover:text-[#2C5D5B] border-2 border-transparent hover:border-[#2C5D5B] transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                             <Briefcase className="w-5 h-5 mr-2" />
-                            View Portfolio
+                            View Projects
                         </Link>
 
                         <Link
@@ -91,7 +91,7 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                     </motion.div>
                 </motion.div>
 
-                {/* Right Image */}
+                {/* Right Image - Enhanced without border */}
                 <motion.div
                     variants={{
                         initial: { scale: 0.9, opacity: 0 },
@@ -100,16 +100,30 @@ const HeroSection = ({ isLoaded, personalInfo }: HeroSectionProps) => {
                     transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
                     className="md:w-2/5 flex justify-center"
                 >
-                    <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl border-4 border-[#2C5D5B] shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
-                        <Image
-                            src="/profiles.png"
-                            alt={personalInfo.name}
-                            width={384}
-                            height={384}
-                            style={{ objectFit: 'cover' }}
-                            priority
-                            className="rounded-2xl transition-transform duration-500 hover:scale-105"
-                        />
+                    <div className="relative w-72 h-72 md:w-96 md:h-96 group">
+                        {/* Subtle background glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#2C5D5B]/20 to-blue-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500 transform group-hover:scale-110"></div>
+                        
+                        {/* Main image container */}
+                        <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 hover:-rotate-1">
+                            <Image
+                                src="/profiles.png"
+                                alt={personalInfo.name}
+                                width={384}
+                                height={384}
+                                style={{ objectFit: 'cover' }}
+                                priority
+                                className="rounded-3xl transition-all duration-700 hover:scale-110 hover:brightness-110"
+                            />
+                            
+                            {/* Subtle overlay gradient for depth */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent rounded-3xl"></div>
+                        </div>
+                        
+                        {/* Floating decorative elements */}
+                        <div className="absolute -top-4 -right-4 w-8 h-8 bg-[#2C5D5B] rounded-full opacity-80 animate-bounce"></div>
+                        <div className="absolute -bottom-6 -left-6 w-6 h-6 bg-blue-400 rounded-full opacity-70 animate-pulse"></div>
+                        <div className="absolute top-1/2 -right-8 w-4 h-4 bg-teal-400 rounded-full opacity-60 animate-ping"></div>
                     </div>
                 </motion.div>
             </motion.div>
